@@ -1,0 +1,6 @@
+data/flights.csv
+*.zip
+__pycache__/
+.venv/
+.env
+node_modules/
