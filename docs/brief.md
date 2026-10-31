@@ -16,6 +16,17 @@ SkyQueue helps a tower supervisor clear a departure queue that a storm has backe
 
 *Plain-words diagram (each cost paired with its fix): see the live brief.*
 
+## Contents
+
+- [Summary](#summary)
+- [1. Problem](#1-problem): costs and fixes, news and research, what exists today
+- [2. How it works](#2-how-it-works): architecture, note reader, safety rules, negotiation
+- [3. Build](#3-build): tech stack, message format, data, prototype vs production
+- [4. Proof](#4-proof): evaluation and impact
+- [5. Fit with the challenge](#5-fit-with-the-challenge): challenge requirements and rubric alignment
+- [6. Delivery](#6-delivery): demo, build plan, risks, limits
+- [Sources](#sources)
+
 ## Summary
 
 SkyQueue settles the exceptions that today's gate-timing tools leave to phone calls, and it can show where its gains come from.
@@ -26,7 +37,7 @@ SkyQueue settles the exceptions that today's gate-timing tools leave to phone ca
 
 The result is less fuel burned, fewer phone calls and no unsafe plans. In a storm hour where 30 flights each wait 10 minutes at the gate instead of the taxiway, that's about 2.7 t of fuel and 8.5 t of CO₂ not burned (estimate). Metering already earns this when a hold is easy. SkyQueue keeps the holds going when a crew, a gate or a connection would otherwise push the plane out early.
 
-## The problem
+## 1. Problem
 
 A storm cuts how many aircraft can take off each hour, but aircraft still push back in order and queue on the taxiway with engines running.
 
@@ -37,6 +48,8 @@ What happens today:
 3. Tower, airline ops and ramp staff sort out each exception by radio and phone, one flight at a time. Typical exceptions are a crew about to run out of duty hours, a gate needed for an arrival and a tight connection.
 4. Delays spread to the same aircraft's later flights.
 
+### Costs and fixes
+
 A storm costs three things, and SkyQueue has one fix for each:
 
 | Cost today | How SkyQueue fixes it | Result |
@@ -46,10 +59,6 @@ A storm costs three things, and SkyQueue has one fix for each:
 | Rushed re-ordering. Shuffling the queue in a hurry risks wake spacing, fuel reserves and crew duty limits. | Safety checked. Plain-code rules test spacing, departure rate, fuel, crew duty and gates before any plan reaches a person. | 0 unsafe plans approved. |
 
 For the pitch, we compute total excess taxi-out minutes at the demo airport on weather-delayed days in 2015. That's each flight's `TAXI_OUT` minus the airport's normal taxi time, summed.
-
-### What exists today
-
-Holding departures at the gate is a proven idea. NASA's ATD-2 trial at Charlotte used departure metering, and airlines estimated over 1 million gallons of fuel and nearly 11,500 tons of CO₂ saved in its first four years. The FAA is now rolling out surface metering in its Terminal Flight Data Manager (TFDM). Metering decides when each aircraft leaves the gate, but it doesn't negotiate trade-offs between organisations, so crew hours, gate conflicts and connections still go by phone. SkyQueue adds that negotiation, and our B1 baseline stands in for metering.
 
 ### In the news and research
 
@@ -64,31 +73,15 @@ Recent news shows the problem is getting worse, and research shows the idea SkyQ
 | 2022 | In ATD-2's first 4 years at Charlotte, airlines saved over 1 million gallons of fuel, almost 11,500 tons of CO₂, 5,948 hours of engine time and 916 hours of passenger delay. | Gate holds work. SkyQueue protects them when exceptions get in the way. | [NASA Spinoff](https://spinoff.nasa.gov/node/11424) |
 | 2009 | An MIT study of Boston Logan found average taxi-out rose from about 16 to 26 minutes as departures on the surface went from 8 or fewer to 17 or more. A simple gate-hold rule was estimated to save about 146,000 gallons a year on one runway layout. | Queue length drives fuel burn, so holding planes back pays off. These are simulation results. | [Simaiakis and Balakrishnan, MIT](https://www.mit.edu/~hamsa/pubs/SimaiakisBalakrishnanGNC2009.pdf) |
 
-## Challenge requirements
+### What exists today
 
-Every requirement and every "avoid" in the Airbus brief maps to a specific part of SkyQueue.
+Holding departures at the gate is a proven idea. NASA's ATD-2 trial at Charlotte used departure metering, and airlines estimated over 1 million gallons of fuel and nearly 11,500 tons of CO₂ saved in its first four years. The FAA is now rolling out surface metering in its Terminal Flight Data Manager (TFDM). Metering decides when each aircraft leaves the gate, but it doesn't negotiate trade-offs between organisations, so crew hours, gate conflicts and connections still go by phone. SkyQueue adds that negotiation, and our B1 baseline stands in for metering.
 
-| Airbus brief | SkyQueue |
-| --- | --- |
-| ATC agent: wake separation, taxiway blockage, throughput | Tower agent owns runway order, spacing, taxiway capacity and departure rate |
-| Pilot agent: fuel, safety, turbulence, connections | Pilot agent owns fuel, crew hours and connections, and reads turbulence reports in the ops notes |
-| Ground agent: gate use, crew overtime, turnaround | Ground agent owns gate holds, gate moves, inbound gate needs and ramp staff |
-| Structured messages | Every message matches a Pydantic schema, and invalid ones are rejected |
-| Explicit constraint checking | Plain-code safety rules, each with a rule ID |
-| Traceable consensus log | Every message, check and decision is saved with a timestamp and linked to the plan line it affects |
-| Deterministic non-AI fallback | A greedy backup plan in Python |
-| Use a row with WEATHER\_DELAY > 15 or LATE\_AIRCRAFT\_DELAY > 20 | That row is the trigger flight, and its airport's departures form the queue |
-| Revised arrival time, gate or flight plan in under 3 turns | Every plan gives revised departure and arrival times, Ground can move a flight to another gate, and the round limit is 3 with agreement targeted by round 2 |
-| Agents resolve it without humans until consensus | Agents negotiate alone, and a person approves the agreed result |
-| Avoid: one prompt for all three roles | Three separate API calls with separate prompts and data |
-| Avoid: endless loops | A hard round limit, then the backup plan |
-| Avoid: ignoring safety margins | Agents can't override the rules, and notes can only add restrictions |
-
-## How it works
+## 2. How it works
 
 The AI parts only suggest. Plain code checks every plan before anyone acts on it, and a person makes the final call.
 
-*Architecture diagram: see the live brief.*
+*Architecture diagram (4 stages: gather, read the notes, negotiate and check, decide): see the live brief.*
 
 1. Pick a delayed flight. pandas loads a 2015 row with a weather or late-aircraft delay.
 2. Build the queue. Every departure from that airport within an hour either side joins the queue, with made-up gates, crew and fuel labelled as made-up.
@@ -175,6 +168,23 @@ Hard rules can never be traded away, and soft rules are what the agents negotiat
 
 A plan that breaks a hard rule goes back to its sender with the rule ID and never reaches the other agents.
 
+## 3. Build
+
+The build uses tools the team already knows, and every made-up value is labelled.
+
+### Tech stack
+
+| Part | Tool | Why |
+| --- | --- | --- |
+| Flight data | Python 3.11, pandas | Handles the 5.8M-row file |
+| Note reader | Claude API, separate from the agents | Typed answers, with cost logged per call |
+| Agents | Claude API | Reads the situation, argues each side and explains trade-offs |
+| Message format | Pydantic | Rejects anything off-schema |
+| Validator, rules, timing | Plain Python, tested with pytest | Exact and repeatable |
+| Backup plan | Greedy rule in Python | Safe plan with no AI, and fast to build |
+| Screen | Streamlit with the SkyQueue design system | Rule table, notes panel, "Why this line" and Approve |
+| Log and cache | SQLite, with JSON export | Audit trail, and reruns give identical results |
+
 ### Message format
 
 ```json
@@ -197,35 +207,7 @@ A plan that breaks a hard rule goes back to its sender with the rule ID and neve
 
 Code assigns every message ID and plan line ID, so agents can't invent them.
 
-### Tech stack
-
-| Part | Tool | Why |
-| --- | --- | --- |
-| Flight data | Python 3.11, pandas | Handles the 5.8M-row file |
-| Note reader | Claude API, separate from the agents | Typed answers, with cost logged per call |
-| Agents | Claude API | Reads the situation, argues each side and explains trade-offs |
-| Message format | Pydantic | Rejects anything off-schema |
-| Validator, rules, timing | Plain Python, tested with pytest | Exact and repeatable |
-| Backup plan | Greedy rule in Python | Safe plan with no AI, and fast to build |
-| Screen | Streamlit with the SkyQueue design system | Rule table, notes panel, "Why this line" and Approve |
-| Log and cache | SQLite, with JSON export | Audit trail, and reruns give identical results |
-
-### Prototype vs production
-
-Each prototype part stands in for a real system, which is how SkyQueue would run in advisory mode beside an airport's metering tool.
-
-| Prototype | Production |
-| --- | --- |
-| 2015 US DOT flights CSV | Live flight and surface data, such as the FAA feeds TFDM uses (ASDE-X, TBFM, TFMS) |
-| Made-up gates, ground power, crew hours and fuel | Airline and airport ops systems for gates, crew scheduling and fuel planning |
-| Template ops notes | Real messages from ramp, dispatch and crews, such as ops chat and ACARS |
-| Simplified timing model | A surface model calibrated on surveillance data |
-| Greedy backup plan | A metering solver, such as TFDM surface metering |
-| Streamlit screen | A supervisor console beside the tower's electronic flight strips |
-| SQLite log | The airport's audit and incident records |
-| Cached AI replies | Live calls with timeouts that fall back to the backup plan |
-
-## Data
+### Data
 
 The queue and its times are real, and everything the DOT file doesn't record is made-up and labelled.
 
@@ -245,7 +227,26 @@ Made-up, with a fixed seed:
 
 The reduced departure rate is the real wheels-off rate in that hour. `flights.csv` wasn't in the challenge zip, so we download it from the challenge Drive and keep it out of git.
 
-## Evaluation
+### Prototype vs production
+
+Each prototype part stands in for a real system, which is how SkyQueue would run in advisory mode beside an airport's metering tool.
+
+| Prototype | Production |
+| --- | --- |
+| 2015 US DOT flights CSV | Live flight and surface data, such as the FAA feeds TFDM uses (ASDE-X, TBFM, TFMS) |
+| Made-up gates, ground power, crew hours and fuel | Airline and airport ops systems for gates, crew scheduling and fuel planning |
+| Template ops notes | Real messages from ramp, dispatch and crews, such as ops chat and ACARS |
+| Simplified timing model | A surface model calibrated on surveillance data |
+| Greedy backup plan | A metering solver, such as TFDM surface metering |
+| Streamlit screen | A supervisor console beside the tower's electronic flight strips |
+| SQLite log | The airport's audit and incident records |
+| Cached AI replies | Live calls with timeouts that fall back to the backup plan |
+
+## 4. Proof
+
+We test SkyQueue against today's order and a metering-style plan, and report what it saves and where it fails.
+
+### Evaluation
 
 We test on a small, honest sample and show where SkyQueue fails, because honest evaluation is 20% of the score.
 
@@ -287,20 +288,7 @@ The 3 demo scenarios double as failure cases:
 2. A deadlock between Pilot and Ground over a gate, which falls back to the backup plan.
 3. An injection note, plus an unsafe plan blocked with WAKE-01.
 
-## Rubric alignment
-
-Each judging criterion has a specific part of SkyQueue behind it.
-
-| Criterion | Weight | What SkyQueue shows |
-| --- | --- | --- |
-| Technical soundness | 25% | Runs end to end on real rows. AI reads and negotiates, and plain code checks, times and builds the backup plan |
-| Problem realism | 20% | A named user, today's phone-based workflow, a cost computed from 2015 data, and ATD-2 and TFDM named as prior work |
-| Honest evaluation | 20% | A calibration number, four approaches on one calculator, failure cases shown and the small sample labelled |
-| Trust and traceability | 20% | Rule IDs, "Why this line" on every plan line, real and made-up values labelled, injection notes flagged and a person approving |
-| Impact | 10% | Headline numbers are what SkyQueue adds over metering, and fuel is credited to gate-holding |
-| Time discipline | 5% | Submission at 15:20 with a 30-minute buffer, and a 3-minute demo rehearsed to 2:45 |
-
-## Impact
+### Impact
 
 SkyQueue's outcome is fewer planes idling on the taxiway, fewer phone calls and no unsafe plan ever approved. Each one is measured on the same scenarios against today's order (B0) and a metering-style plan (B1).
 
@@ -316,7 +304,46 @@ At Charlotte, ATD-2's gate holds saved over 1 million gallons in 4 years. We use
 
 SkyQueue would run in advisory mode beside existing metering tools, and the supervisor keeps full authority.
 
-## Demo
+## 5. Fit with the challenge
+
+### Challenge requirements
+
+Every requirement and every "avoid" in the Airbus brief maps to a specific part of SkyQueue.
+
+| Airbus brief | SkyQueue |
+| --- | --- |
+| ATC agent: wake separation, taxiway blockage, throughput | Tower agent owns runway order, spacing, taxiway capacity and departure rate |
+| Pilot agent: fuel, safety, turbulence, connections | Pilot agent owns fuel, crew hours and connections, and reads turbulence reports in the ops notes |
+| Ground agent: gate use, crew overtime, turnaround | Ground agent owns gate holds, gate moves, inbound gate needs and ramp staff |
+| Structured messages | Every message matches a Pydantic schema, and invalid ones are rejected |
+| Explicit constraint checking | Plain-code safety rules, each with a rule ID |
+| Traceable consensus log | Every message, check and decision is saved with a timestamp and linked to the plan line it affects |
+| Deterministic non-AI fallback | A greedy backup plan in Python |
+| Use a row with WEATHER\_DELAY > 15 or LATE\_AIRCRAFT\_DELAY > 20 | That row is the trigger flight, and its airport's departures form the queue |
+| Revised arrival time, gate or flight plan in under 3 turns | Every plan gives revised departure and arrival times, Ground can move a flight to another gate, and the round limit is 3 with agreement targeted by round 2 |
+| Agents resolve it without humans until consensus | Agents negotiate alone, and a person approves the agreed result |
+| Avoid: one prompt for all three roles | Three separate API calls with separate prompts and data |
+| Avoid: endless loops | A hard round limit, then the backup plan |
+| Avoid: ignoring safety margins | Agents can't override the rules, and notes can only add restrictions |
+
+### Rubric alignment
+
+Each judging criterion has a specific part of SkyQueue behind it.
+
+| Criterion | Weight | What SkyQueue shows |
+| --- | --- | --- |
+| Technical soundness | 25% | Runs end to end on real rows. AI reads and negotiates, and plain code checks, times and builds the backup plan |
+| Problem realism | 20% | A named user, today's phone-based workflow, a cost computed from 2015 data, and ATD-2 and TFDM named as prior work |
+| Honest evaluation | 20% | A calibration number, four approaches on one calculator, failure cases shown and the small sample labelled |
+| Trust and traceability | 20% | Rule IDs, "Why this line" on every plan line, real and made-up values labelled, injection notes flagged and a person approving |
+| Impact | 10% | Headline numbers are what SkyQueue adds over metering, and fuel is credited to gate-holding |
+| Time discipline | 5% | Submission at 15:20 with a 30-minute buffer, and a 3-minute demo rehearsed to 2:45 |
+
+## 6. Delivery
+
+This is how we demo, build and de-risk SkyQueue before the 15:20 submission.
+
+### Demo
 
 The demo runs in 3 minutes:
 
@@ -327,7 +354,7 @@ The demo runs in 3 minutes:
 
 We keep a recorded run in case the live one fails.
 
-## Build plan
+### Build plan
 
 We build a small, working version first and keep a small honest evaluation, because there are under 4 hours. The plan assumes four people. With fewer, Data merges with Backend, and Frontend takes the slides.
 
@@ -346,7 +373,7 @@ The 13:25 checkpoint matters most. If it slips, we keep FakeReader for the notes
 
 We never cut calibration, the zero-break check, the injection note, the recorded run or B2. If time runs short, we cut in this order: extra test scenarios, the evaluation size, then visual polish.
 
-## Risks
+### Risks
 
 | Risk | Plan |
 | --- | --- |
@@ -358,7 +385,7 @@ We never cut calibration, the zero-break check, the injection note, the recorded
 | B2 matches SkyQueue | Report it, and name where negotiation still helps |
 | The notes look staged | Write the 30 test notes before tuning, including ambiguous and hostile ones |
 
-## Limits
+### Limits
 
 We say these out loud in the demo:
 
