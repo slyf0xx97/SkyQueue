@@ -1,5 +1,7 @@
 # SkyQueue
 
+![SkyQueue: orchestrate taxiing. Three AI agents for Tower, Pilot and Ground negotiate a storm-delayed departure queue.](docs/images/cover.png)
+
 Autonomous SG 2026, AI & Aerospace track, Airbus Challenge #2.
 
 When a storm backs up a departure queue, SkyQueue has three Claude agents (Tower, Pilot and Ground) negotiate pushback order, engines-off gate holds, moves to remote stands and runway order, in at most 3 rounds. A separate note reader turns free-text ops messages into typed answers, and a plain-Python validator decides which of those answers become rules. Plain-code safety rules check every proposed plan. If the agents don't agree inside 3 rounds, a greedy backup plan takes over, and a human supervisor approves whichever plan comes out.
@@ -28,6 +30,10 @@ The design rule is short: **AI suggests, code decides, a person approves.**
 - Agents never invent IDs. Code assigns every `msg_id` (`R2-TOWER-01`), `line_id` (`L001`, or `BK-01` for backup lines) and `note_id` (`N1`). An agent that cites a note ID it was not given is ignored.
 - Ops notes are data, never instructions. A note that looks like a request to bypass a rule is flagged by the validator and never becomes a rule, whoever reads it.
 - Nothing is applied without the supervisor. The screen only reads the log; Approve and Reject are written back to it.
+
+![SkyQueue architecture: delayed flight and queue, ops notes through the note reader and validator, three agents negotiating up to 3 rounds against the safety rules and timing calculator, then supervisor approval or the greedy backup plan, all written to the consensus log](docs/images/architecture.png)
+
+This is the diagram from the How it works section of the live site. The numbered boxes follow one storm scenario from the delayed flight to the supervisor's decision; boxes marked Claude API are AI, everything marked Python is plain code.
 
 ### Pipeline
 
