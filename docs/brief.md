@@ -12,7 +12,6 @@ SkyQueue helps a tower supervisor clear a departure queue that a storm has backe
 | Data | 2015 US DOT flight delays, plus made-up gate, crew and fuel data that is labelled everywhere |
 | Stack | Python, Claude API, Pydantic, Streamlit, SQLite |
 | Code | github.com/slyf0xx97/SkyQueue, with the build spec in `docs/prd.md` |
-| Submit | 15:20 SGT on 31 Oct 2026 |
 | Live brief | https://claude.ai/artifact/965TKTqRrFW6i5qqinx5Zj, with both diagrams |
 
 *Plain-words diagram (each cost paired with its fix): see the live brief.*
@@ -42,9 +41,9 @@ A storm costs three things, and SkyQueue has one fix for each:
 
 | Cost today | How SkyQueue fixes it | Result |
 | --- | --- | --- |
-| Fuel burned in line. Planes idle on the taxiway with engines on, burning about 9 kg of fuel a minute each. That figure comes from NASA's Charlotte numbers, 1 million gallons over 5,948 engine hours. | Holds planes at the gate. The agents agree who waits at the gate with engines off, even when a crew's duty hours, a gate's ground power or a connection would otherwise push the plane out early. | About 2.7 t less fuel and 8.5 t less CO₂ in a storm hour where 30 flights each wait 10 minutes at the gate. This is an estimate using 3.16 kg of CO₂ per kg of fuel. |
-| Phone calls. Tower, airline ops and ramp staff sort each exception by phone, one flight at a time, while the FAA is about 1,560 controllers short. | Settles it without calls. The Tower, Pilot and Ground agents negotiate for up to 3 rounds and send one plan to the supervisor. | Each exception the agents settle is one call fewer, and the supervisor approves once. |
-| Rushed re-ordering. Shuffling the queue in a hurry risks wake spacing, fuel reserves and crew duty limits. | Checks every plan in code. Plain-code rules test spacing, departure rate, fuel, crew duty and gates before any plan reaches a person. | 0 unsafe plans approved. |
+| Fuel burned in line. Planes idle on the taxiway with engines on, burning about 9 kg of fuel a minute each. That figure comes from NASA's Charlotte numbers, 1 million gallons over 5,948 engine hours. | Fuel saved. The agents agree who waits at the gate with engines off, even when a crew's duty hours, a gate's ground power or a connection would otherwise push the plane out early. | About 2.7 t less fuel and 8.5 t less CO₂ in a storm hour where 30 flights each wait 10 minutes at the gate. This is an estimate using 3.16 kg of CO₂ per kg of fuel. |
+| Phone calls. Tower, airline ops and ramp staff sort each exception by phone, one flight at a time, while the FAA is about 1,560 controllers short. | Calls cut. The Tower, Pilot and Ground agents negotiate for up to 3 rounds and send one plan to the supervisor. | Each exception the agents settle is one call fewer, and the supervisor approves once. |
+| Rushed re-ordering. Shuffling the queue in a hurry risks wake spacing, fuel reserves and crew duty limits. | Safety checked. Plain-code rules test spacing, departure rate, fuel, crew duty and gates before any plan reaches a person. | 0 unsafe plans approved. |
 
 For the pitch, we compute total excess taxi-out minutes at the demo airport on weather-delayed days in 2015. That's each flight's `TAXI_OUT` minus the airport's normal taxi time, summed.
 
