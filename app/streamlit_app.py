@@ -368,11 +368,7 @@ st.markdown("""<style>
 .stApp::before { left: 4px; } .stApp::after { right: 4px; }
 @keyframes rwylights { to { background-position: 0 40px; } }
 html.rwy-lit .stApp::before, html.rwy-lit .stApp::after, .stApp:has(.keytoggle.on)::before, .stApp:has(.keytoggle.on)::after { opacity: 1; }
-.stApp:has(.keytoggle.on) .st-key-nav [data-baseweb="input"] { border-color: #5ccf8a !important; box-shadow: 0 0 16px #5ccf8a66; }
-/* the page stays dull until a key goes in, then fades to full colour */
-iframe { transition: filter .9s ease; }
-.stApp:not(:has(.keytoggle.on)) iframe { filter: grayscale(.55) brightness(.78); }
-div[role="dialog"] { background: #1b1c1f; border: 2px solid #ffd400; }
+.stApp:has(.keytoggle.on) .st-key-nav [data-baseweb="input"] { border-color: #5ccf8a !important; box-shadow: 0 0 16px #5ccf8a66; }div[role="dialog"] { background: #1b1c1f; border: 2px solid #ffd400; }
 .welcome-h { font: 900 34px/1 'Anybody', sans-serif; font-stretch: 118%; text-transform: uppercase; color: #f2f0ea; margin: 0 0 8px; }
 .welcome-h span { color: #ffd400; }
 .welcome-lights { height: 10px; margin: 6px 0 14px; background: radial-gradient(circle, #ffd400 0 3px, transparent 4px) 0 0 / 22px 10px;
