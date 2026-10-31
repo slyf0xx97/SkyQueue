@@ -6,7 +6,7 @@ Autonomous SG 2026, Airbus Challenge #2. Background, pitch and evaluation story 
 
 ## 1. Summary
 
-SkyQueue helps a tower supervisor clear a weather-delayed departure queue. A note reader turns free-text ops notes into typed answers, and plain code validates them. Three AI agents (Tower, Pilot, Ground) then negotiate pushback order, engines-off gate holds, gate moves and runway order in at most 3 rounds. Plain code checks every plan against safety rules. If the agents don't agree, a greedy backup plan is used. A person approves every final plan, which includes revised departure and arrival times, and every plan line can be traced back to the messages, notes and rule checks behind it.
+SkyQueue helps a tower supervisor clear a weather-delayed departure queue. A note reader (its own Claude API call) turns free-text ops notes into typed answers, and plain code validates them. Three AI agents (Tower, Pilot, Ground) then negotiate pushback order, engines-off gate holds, gate moves and runway order in at most 3 rounds. Plain code checks every plan against safety rules. If the agents don't agree, a greedy backup plan is used. A person approves every final plan, which includes revised departure and arrival times, and every plan line can be traced back to the messages, notes and rule checks behind it.
 
 ## 2. Problem
 
@@ -69,18 +69,19 @@ Non-goals:
 - F2.5 Code assigns each note a `note_id` (N1, N2 and so on) and records the flights and gates it names.
 
 ### F3. Note reader
-- F3.1 One interface with three implementations: `JevReader` (Jev decision model `typesafe/jev-1.14` via OpenRouter), `ClaudeReader` and `FakeReader` (returns the hidden ground truth, for building and tests).
-- F3.2 One request per scenario with all its notes. For each note the reader answers: constraint type (NO_GATE_HOLD, DUTY_LIMIT, PRIORITY_CONNECTION, TURBULENCE, GATE_UNAVAILABLE, NONE), flight (from the scenario, or NONE), gate (from the scenario, or NONE), urgency 0 to 3, and the probability that the note asks to ignore a safety rule.
-- F3.3 Readings are cached by model plus prompt hash, and Jev's `usage.cost` is logged.
+- F3.1 One interface with two implementations: `ClaudeReader` (a Claude API call separate from the agents, with only the typed questions in its prompt and nothing about the negotiation) and `FakeReader` (returns the hidden ground truth, for building and tests).
+- F3.2 One request per scenario with all its notes. For each note the reader answers: constraint type (NO_GATE_HOLD, DUTY_LIMIT, PRIORITY_CONNECTION, TURBULENCE, GATE_UNAVAILABLE, NONE), flight (from the scenario, or NONE), gate (from the scenario, or NONE), urgency 0 to 3, and the probability that the note asks to ignore a safety rule. Each answer carries a confidence from 0 to 1, and the reply must match the `NoteReading` Pydantic schema or it is rejected.
+- F3.3 Readings are cached by model plus prompt hash, and token use and cost are logged.
+- F3.3a Claude's confidence numbers are its own estimates, not calibrated probabilities. They only filter out unsure answers, and the validator's checks decide what becomes a rule.
 - F3.4 If the reader fails, its notes are marked ambiguous and the agents still read the raw notes.
 - F3.5 The reader runs only on the 3 demo scenarios (and a few more), once, with replies replayed from the cache.
 
 ### F4. Validator (no AI)
-- F4.1 A reading becomes a validated constraint only if the type is allowed, the flight or gate exists in the scenario, confidence is at or above `jev.min_confidence`, and the override probability is below the flag threshold.
+- F4.1 A reading becomes a validated constraint only if the type is allowed, the flight or gate exists in the scenario, confidence is at or above `reader.min_confidence`, and the override probability is below the flag threshold.
 - F4.2 Outcomes: ACCEPTED, AMBIGUOUS (low confidence, never a rule), FLAGGED (asks to break a rule, never a rule, logged as an injection attempt), single-source (only one reader found it, accepted if it passes and marked) and mismatch (readers disagree, each passing candidate accepted and the mismatch logged).
 - F4.3 The validator compares each agent's `constraints_from_notes` with the reader's after every round and logs mismatches.
 - F4.4 No constraint type can relax a hard rule. One note's effect on soft weights is capped.
-- F4.5 `jev.min_confidence` is tuned on the dev scenarios only, never on the 30 test notes.
+- F4.5 `reader.min_confidence` is tuned on the dev scenarios only, never on the 30 test notes.
 
 ### F5. Agents
 - F5.1 Tower, Pilot and Ground are separate Claude API calls, each with its own system prompt and private data.
@@ -170,7 +171,7 @@ ConstraintType = Literal["NO_GATE_HOLD", "DUTY_LIMIT", "PRIORITY_CONNECTION",
 
 class NoteReading(BaseModel):
     note_id: str
-    reader: Literal["JEV", "CLAUDE", "FAKE"]
+    reader: Literal["CLAUDE", "FAKE"]
     constraint_type: ConstraintType
     p_type: float                  # confidence in the chosen type
     target_flight: Optional[str]   # None means NONE
@@ -185,7 +186,7 @@ class ReadingDecision(BaseModel):
     type: ConstraintType
     flight: Optional[str]
     gate: Optional[str]
-    source: Literal["JEV", "AGENT", "BOTH"]   # JEV or AGENT alone means single-source
+    source: Literal["READER", "AGENT", "BOTH"]   # READER or AGENT alone means single-source
     status: Literal["ACCEPTED", "AMBIGUOUS", "FLAGGED"]
 ```
 
@@ -205,7 +206,7 @@ Validated constraints are the decisions with status ACCEPTED.
 
 ## 10. Tech stack
 
-Python 3.11, pandas, Pydantic, Claude API, Jev via OpenRouter, Streamlit, SQLite, pytest.
+Python 3.11, pandas, Pydantic, Claude API, Streamlit, SQLite, pytest.
 
 ## 11. Repo layout
 
@@ -244,11 +245,11 @@ docs/            brief.md, prd.md, design-system/README.md, streamlit.md
 |---|---|
 | 12:25 | Schemas frozen, airport and 3 demo scenarios picked |
 | 13:25 | Integration checkpoint: one scenario runs end to end with FakeReader and fake agents |
-| 14:15 | Real agents and Jev cached. Feature freeze |
+| 14:15 | Real agents and the note reader cached. Feature freeze |
 | 15:00 | Recording, calibration, small evaluation and slides done |
 | 15:20 | Submit (hard deadline about 15:50) |
 
-If the 13:25 checkpoint slips, cut the Jev call first and use ClaudeReader.
+If the 13:25 checkpoint slips, keep FakeReader for the notes and put the time into the real agents.
 
 ## 14. Known limits
 
@@ -256,10 +257,9 @@ If the 13:25 checkpoint slips, cut the Jev call first and use ClaudeReader.
 - One Pilot agent speaks for all airlines, but real airlines compete.
 - Wake classes, fuel, gates, crew times and notes are made-up.
 - The timing calculator is simplified, and its error is reported.
-- Jev is new (released September 2026), and its speed and accuracy claims are the vendor's own.
+- The note reader and the agents use the same model family, so the validator's comparison is a second reading, not a fully independent one.
 
 ## Sources
 
 - NASA Spinoff, ATD-2 at Charlotte: https://spinoff.nasa.gov/node/11424
 - FAA TFDM Surface Metering: https://www.faa.gov/air_traffic/technology/tfdm/sm
-- Jev on OpenRouter: https://openrouter.ai/docs/guides/community/jev

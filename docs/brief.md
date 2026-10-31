@@ -73,8 +73,8 @@ Metering calculates *when* each aircraft should leave the gate. It does not nego
 
 | Job | Done by |
 | --- | --- |
-| Read each ops note once: constraint type, flight, gate, urgency, "is this asking to break a rule?" | Jev decision model (typed answers + confidence) |
-| Accept, mark ambiguous or flag each reading; compare Jev with the agents | Plain-code validator |
+| Read each ops note once: constraint type, flight, gate, urgency, "is this asking to break a rule?" | Claude note reader (its own call, typed JSON answers with a confidence each) |
+| Accept, mark ambiguous or flag each reading, and compare the note reader with the agents | Plain-code validator |
 | Propose and counter-offer; explain trade-offs | Claude agents (3 separate calls) |
 | Summarise the final plan for the supervisor | Claude |
 | Safety rules, timing, fuel arithmetic | Plain code |
@@ -120,11 +120,11 @@ Each scenario has 2–5 short free-text notes, written to match real ops chatter
 
 The note reader and the agents turn notes into structured constraints (for example `{type: NO_GATE_HOLD, gate: B12}`). Plain code validates each one. The B1 baseline stands in for today's metering tools and doesn't see the notes, so the gap between B1 and B2 shows what reading the notes adds.
 
-### Note reader (Jev) and validator
+### Note reader and validator
 
-**Why a non-Claude model:** reading a note is a classification job (which constraint, which flight, how sure), not a writing job. Jev is built for exactly that: it takes typed questions and returns typed answers with probabilities, not prose. Claude keeps the negotiation and the explanations. Right tool for each job.
+Reading a note is a classification job (which constraint, which flight, how sure), so it gets its own Claude API call with a fixed set of typed questions and nothing about the negotiation in the prompt. The agents argue for their side, and the reader only answers the questions, so the validator can check the reader's answers against each agent's reading.
 
-**Jev** (`typesafe/jev-1.14` on OpenRouter, version pinned for evaluation) gets all of a scenario's notes in one request and answers five typed questions per note:
+The note reader gets all of a scenario's notes in one request and answers five typed questions per note. Its reply must match a Pydantic schema, so a malformed answer is rejected before it reaches the validator.
 
 | Question | Answer type |
 | --- | --- |
@@ -134,7 +134,7 @@ The note reader and the agents turn notes into structured constraints (for examp
 | How urgent? | Score 0–3 |
 | Does it ask to ignore a safety rule? | Yes/no with probability |
 
-The reader sits behind one interface with three versions: **JevReader**, **ClaudeReader** and **FakeReader** (returns the hidden ground truth, for building and testing with no API spend). If Jev is down or unsure, the note is marked ambiguous and the agents still read the raw note.
+The reader sits behind one interface with two versions: **ClaudeReader** and **FakeReader** (returns the hidden ground truth, for building and testing with no API spend). Claude's confidence numbers are its own estimates, not calibrated probabilities, so they only filter out unsure answers. The validator's checks decide what becomes a rule. If the reader fails or is unsure, the note is marked ambiguous and the agents still read the raw note.
 
 The **validator** is plain code and is the trust boundary. A reading becomes a rule only if the type is allowed, the flight or gate exists, confidence is above the threshold, and it is not an override request.
 
@@ -157,7 +157,7 @@ The confidence threshold is tuned on the \~20 dev scenarios only, never on the 3
 | Part | Tool | Why |
 | --- | --- | --- |
 | Load and filter flight data | Python 3.11, pandas | Standard, and handles the 5.8M-row file |
-| Note reader | Jev decision model via OpenRouter, with ClaudeReader as fallback | Typed answers with confidence, and cost is logged per call |
+| Note reader | Claude API, as a separate call from the agents, with FakeReader for tests | Typed answers with confidence, and cost is logged per call |
 | Negotiating agents | Claude API | Reads the situation, argues each side and explains trade-offs |
 | Message and constraint format | Pydantic | Rejects anything off-schema |
 | Validator, safety rules, timing calculator | Plain Python, tested with pytest | Exact and repeatable |
@@ -189,11 +189,11 @@ Each agreed plan also lists every flight's **revised departure and arrival time*
 
 ### Negotiation rounds (limit is a setting; default 3)
 
-- **Before round 1:** Jev reads the notes once. The validator sorts each reading into accepted, ambiguous, flagged or single-source. Accepted constraints go to all three agents.
+- **Before round 1:** the note reader reads the notes once. The validator sorts each reading into accepted, ambiguous, flagged or single-source. Accepted constraints go to all three agents.
 - **Round 1:** Tower proposes an order and departure rate. Pilot and Ground accept or counter, citing note IDs and rule IDs.
 - **Round 2:** Tower merges the counters. Agents accept or reject. Target: agreement here.
 - **Round 3:** final offer. All accept and all rules pass = agreed. Otherwise the backup plan (with validated notes) goes to the supervisor, labelled as backup.
-- **After each round:** the validator compares each agent's reading of the notes with Jev's and logs any mismatch.
+- **After each round:** the validator compares each agent's reading of the notes with the note reader's and logs any mismatch.
 - A plan that breaks a hard rule goes back to its sender with the rule ID and never reaches the others.
 
 ### Safety rules (hard rules can never be traded away)
@@ -254,7 +254,7 @@ Reading the steps: B0 → B1 is what optimisation adds, B1 → B2 is what the no
 | Over-caution | Scenarios where an extra accepted constraint forced the backup plan |
 | Injection notes turned into rules | Always 0 |
 | Trace completeness | 100% of approved plan lines fully linked |
-| Time and cost per scenario | < 30 s per negotiation; Jev cost from logged usage |
+| Time and cost per scenario | Under 30 s per negotiation, with API cost logged per call |
 
 Report medians with the spread, and compare each scenario against its own baselines (paired).
 
@@ -301,7 +301,7 @@ Fuel and CO₂ come second. We label them as estimates and credit them to gate-h
 ## 9. Demo (3 minutes, Time discipline 5%)
 
 1. **0:00–0:30:** The supervisor, the long queue, the radio calls, the cost.
-2. **0:30–1:45:** Live run on a real row: Jev reads the notes and flags the injection; the three characters negotiate; one unsafe plan is blocked; they agree in round 2; the supervisor clicks "Why this line" and approves. Revised departure and arrival times shown.
+2. **0:30 to 1:45:** Live run on a real row. The note reader reads the notes and flags the injection, the three agents negotiate, one unsafe plan is blocked, and they agree in round 2. The supervisor clicks "Why this line" and approves, and the revised departure and arrival times show.
 3. **1:45–2:30:** One chart, four bars: B0 → B1 → B2 → SkyQueue, labelled optimisation, notes, negotiation. Then one failure case.
 4. **2:30–3:00:** Limits, made-up data, how it would be adopted.
 
@@ -316,25 +316,25 @@ We have 3 hours 53 minutes from 12:00, so we shrink the simulation and the evalu
 | 12:00 to 12:25 | Freeze the schemas, start the flights.csv download, pick the airport and the 3 demo scenarios, assign roles. |
 | 12:25 to 13:25 | Work in parallel. Data builds the loader and simulate(). Backend builds the rules, the validator and the greedy backup. AI builds the notes, FakeReader and the coordinator with the log. Frontend builds the screen on fake logs. |
 | 13:25 to 13:40 | Integration checkpoint: one scenario runs end to end with fakes. |
-| 13:40 to 14:15 | Real Claude agents and one Jev call per demo scenario, both cached. Frontend adds the notes panel and "Why this line". |
+| 13:40 to 14:15 | Real Claude agents and one note-reader call per demo scenario, both cached. Frontend adds the notes panel and "Why this line". |
 | 14:15 | Feature freeze. |
 | 14:15 to 15:00 | Record the run, run calibration and the small evaluation, build the slides, rehearse to 2:45. |
 | 15:00 to 15:20 | Final pass and submit. |
 | 15:20 to 15:50 | Buffer. Don't plan to use it. |
 
-The 13:25 checkpoint matters most. If it slips, we cut the Jev call first and let Claude read the notes.
+The 13:25 checkpoint matters most. If it slips, we keep FakeReader for the notes and put the time into the real agents.
 
 | Area | Decision | Why |
 | --- | --- | --- |
 | Data | Keep one airport with real trigger rows and the real queue, plus labelled made-up extras | Real data makes the demo credible |
 | Timing model | Shrink to normal taxi time plus queue wait from the reduced departure rate and wake gaps, with taxiway capacity as a simple counter | Calibration stays one cheap number |
 | Safety rules | Keep every rule ID, implemented simply, with the zero-break check | The trust story depends on it |
-| Notes and Jev | Keep, but read only the 3 demo scenarios once, cache the replies and replay them | We still show real typed readings and the injection flag at almost no cost |
+| Notes and reader | Keep, but read only the 3 demo scenarios once, cache the replies and replay them | We still show real typed readings and the injection flag at almost no cost |
 | Agents | Keep real Claude calls on the 3 demo scenarios, cached | The demo must show real calls, and a cached replay labelled "recorded" counts |
 | Backup plan | Shrink to a greedy rule with gate holds ranked by slack | Saves about 1.5 hours |
 | Screen | Keep the rule table, notes panel, "Why this line" and Approve, with glyph tiles for the three agents | Trust and traceability is 20% of the score |
 | Evaluation | Shrink to about 30 scenarios for calibration and for B0, B1 and B2, plus SkyQueue on the demo scenarios and a few more | Honest evaluation is 20% of the score |
-| Cut | The 100 to 300 scenario batch, the sensitivity check, the Claude-vs-Jev comparison, linked selection, character art | A convincing prototype can do without them |
+| Cut | The 100 to 300 scenario batch, the sensitivity check, linked selection, character art | A convincing prototype can do without them |
 
 We pick the 3 demo scenarios so they double as failure cases:
 
@@ -350,8 +350,8 @@ Feature freeze is at 14:15.
 
 | Risk | Plan |
 | --- | --- |
-| Jev is new (released Sept 2026); its speed and accuracy claims are the vendor's own | Measure it on our 30 labelled notes and report only what we measure; ClaudeReader is a drop-in fallback |
-| OpenRouter key or credit fails on demo day | Cached replies, a recorded run, and the backup plan, which needs no API |
+| Claude's confidence numbers are its own estimates, not calibrated probabilities | Measure precision and recall on the 30 labelled notes, and let the validator's checks decide what becomes a rule |
+| Claude API key or credit fails on demo day | Cached replies, a recorded run, and the backup plan, which needs no API |
 | Agent output off-schema | Validate, re-ask once, then treat as reject |
 | Calculator doesn't match real taxi times | Report the error; compare only within our calculator |
 | Made-up data drives the result | Label every made-up value and say the result depends on them |
@@ -375,6 +375,4 @@ Feature freeze is at 14:15.
 - [NASA: Strategic Surface Metering at CLT (DASC 2020)](https://ntrs.nasa.gov/api/citations/20205004260/downloads/DASC2020_Strategic_Surface_Metering_at_CLT_FINAL.pdf)
 - [FAA: TFDM Surface Metering](https://www.faa.gov/air_traffic/technology/tfdm/sm)
 - [FAA: What is TFDM?](https://www.faa.gov/air_traffic/technology/tfdm/whatistfdm)
-- [Jev on OpenRouter (guide)](https://openrouter.ai/docs/guides/community/jev)
-- [Jev 1.14 model page](https://openrouter.ai/models/typesafe/jev-1.14)
 - [FAA hiring target cut, May 2026](https://www.cp24.com/news/world/2026/05/15/faa-slashes-hiring-target-saying-it-can-keep-the-skies-safe-with-fewer-air-traffic-controllers-than-it-thought/)

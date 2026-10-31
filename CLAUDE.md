@@ -29,7 +29,7 @@ We aim to submit at 15:20 SGT on 31 Oct 2026, and the hard deadline is about 15:
 3. Safety rules, validator and greedy backup in `src/checker/` and `src/solver/`, with pytest tests.
 4. Notes generator, FakeReader and the coordinator with the SQLite log and trace links.
 5. Streamlit screen in `app/` on fake logs: rule table, notes panel, "Why this line", Approve.
-6. Real Claude agents and JevReader, both cached. If Jev isn't working by 13:40, use ClaudeReader.
+6. Real Claude agents and ClaudeReader, both cached.
 7. Calibration and the small evaluation in `eval/`.
 
 ## Rules for this repo
@@ -46,4 +46,4 @@ We aim to submit at 15:20 SGT on 31 Oct 2026, and the hard deadline is about 15:
 
 ## Stack
 
-Python 3.11, pandas, Pydantic, Claude API (`anthropic`), Jev via OpenRouter, Streamlit, SQLite, pytest.
+Python 3.11, pandas, Pydantic, Claude API (`anthropic`), Streamlit, SQLite, pytest. All AI calls, the note reader and the three agents, go through the Claude API.

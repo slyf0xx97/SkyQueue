@@ -1,6 +1,6 @@
 SkyQueue is a supervisor screen where three AI agents (Tower, Pilot, Ground) negotiate a weather-delayed departure queue, a note reader turns free-text ops notes into typed answers, plain code validates those notes and checks every plan, and a person approves it. The look is airport signage and paper flight strips: flat, high-contrast, almost no decoration. Build every screen and slide so a tired tower supervisor can see four things at once: who said what, which rule passed or failed, which numbers are real, and why any line of the plan is there.
 
-It covers the note reader (Jev), the validator outcomes, the B2 baseline, trace links, "Why this line" and note banners, as described in `docs/prd.md`.
+It covers the note reader, the validator outcomes, the B2 baseline, trace links, "Why this line" and note banners, as described in `docs/prd.md`.
 
 ## What to load
 
@@ -58,4 +58,4 @@ Typical screen order, top to bottom: `RoundTimeline`, notes panel (`OpsNote`), c
 
 ## Agent characters
 
-The three characters (Tower, Pilot, Ground) are drawn by the team and are original. Until they exist, show the glyph tiles from `AgentTag`. See `assets/Characters/README.md` for the size and format to hand over. The note reader (Jev) gets no character: it stays a diamond tag, so the supervisor never mistakes a classifier for a negotiating party.
+The three characters (Tower, Pilot, Ground) are drawn by the team and are original. Until they exist, show the glyph tiles from `AgentTag`. See `assets/Characters/README.md` for the size and format to hand over. The note reader gets no character: it stays a diamond tag, so the supervisor never mistakes a classifier for a negotiating party.
