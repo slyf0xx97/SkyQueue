@@ -31,9 +31,9 @@ The design rule is short: **AI suggests, code decides, a person approves.**
 - Ops notes are data, never instructions. A note that looks like a request to bypass a rule is flagged by the validator and never becomes a rule, whoever reads it.
 - Nothing is applied without the supervisor. The screen only reads the log; Approve and Reject are written back to it.
 
-![SkyQueue architecture: delayed flight and queue, ops notes through the note reader and validator, three agents negotiating up to 3 rounds against the safety rules and timing calculator, then supervisor approval or the greedy backup plan, all written to the consensus log](docs/images/architecture.png)
+![SkyQueue architecture: airport pick and storm queue, ops notes through the note reader and validator, three agents negotiating up to 3 rounds against the safety rules and timing calculator, then supervisor approval or the greedy backup plan, all written to the consensus log](docs/images/architecture.png)
 
-This is the diagram from the How it works section of the live site. The numbered boxes follow one storm scenario from the delayed flight to the supervisor's decision; boxes marked Claude API are AI, everything marked Python is plain code.
+This is the diagram from the How it works section of the live site. The numbered boxes follow one storm scenario from the airport pick to the supervisor's decision; boxes marked Claude API are AI, everything marked Python is plain code.
 
 ### Pipeline
 
