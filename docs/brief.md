@@ -14,9 +14,8 @@ SkyQueue helps a tower supervisor clear a departure queue that a storm has backe
 | Code | github.com/slyf0xx97/taxi-out-negotiator, with the build spec in `docs/prd.md` |
 | Submit | 15:20 SGT on 31 Oct 2026 |
 | Live brief | https://claude.ai/artifact/965TKTqRrFW6i5qqinx5Zj, with both diagrams |
-| Live brief | https://claude.ai/artifact/965TKTqRrFW6i5qqinx5Zj (with both diagrams) |
 
-*Plain-words diagram: see the live brief.*
+*Plain-words diagram (each cost paired with its fix): see the live brief.*
 
 ## Summary
 
@@ -25,6 +24,8 @@ SkyQueue settles the exceptions that today's gate-timing tools leave to phone ca
 1. Negotiation on top of metering. Metering tools such as NASA's ATD-2 and the FAA's TFDM decide when each aircraft leaves the gate. SkyQueue's three agents then settle the cases those tools can't see, such as a crew running out of duty hours, a gate with broken ground power or a tight passenger connection.
 2. AI suggests, code decides. Nothing an AI model says becomes a rule until plain-code checks accept it. Notes can only add restrictions, so an injected note can't loosen a safety rule, and a person approves every plan.
 3. We show where the value comes from. We run four approaches on the same real scenarios, and each step between them isolates one cause. We report the result even if negotiation adds nothing.
+
+The result is less fuel burned, fewer phone calls and no unsafe plans. In a storm hour where 30 flights each wait 10 minutes at the gate instead of the taxiway, that's about 2.7 t of fuel and 8.5 t of CO₂ not burned (estimate). Metering already earns this when a hold is easy. SkyQueue keeps the holds going when a crew, a gate or a connection would otherwise push the plane out early.
 
 ## The problem
 
@@ -37,17 +38,32 @@ What happens today:
 3. Tower, airline ops and ramp staff sort out each exception by radio and phone, one flight at a time. Typical exceptions are a crew about to run out of duty hours, a gate needed for an arrival and a tight connection.
 4. Delays spread to the same aircraft's later flights.
 
-What it costs:
+A storm costs three things, and SkyQueue has one fix for each:
 
-- Fuel and CO₂ burned while waiting. We assume about 10 kg a minute for a narrowbody taxiing and 3.16 kg of CO₂ per kg of fuel, and we label both as assumptions.
-- Controller workload while US towers are short of staff.
-- Risk to spacing rules and crew duty limits when the queue is re-ordered in a hurry.
+| Cost today | How SkyQueue fixes it | Result |
+| --- | --- | --- |
+| Fuel burned in line. Planes idle on the taxiway with engines on, burning about 9 kg of fuel a minute each. That figure comes from NASA's Charlotte numbers, 1 million gallons over 5,948 engine hours. | Holds planes at the gate. The agents agree who waits at the gate with engines off, even when a crew's duty hours, a gate's ground power or a connection would otherwise push the plane out early. | About 2.7 t less fuel and 8.5 t less CO₂ in a storm hour where 30 flights each wait 10 minutes at the gate. This is an estimate using 3.16 kg of CO₂ per kg of fuel. |
+| Phone calls. Tower, airline ops and ramp staff sort each exception by phone, one flight at a time, while the FAA is about 1,560 controllers short. | Settles it without calls. The Tower, Pilot and Ground agents negotiate for up to 3 rounds and send one plan to the supervisor. | Each exception the agents settle is one call fewer, and the supervisor approves once. |
+| Rushed re-ordering. Shuffling the queue in a hurry risks wake spacing, fuel reserves and crew duty limits. | Checks every plan in code. Plain-code rules test spacing, departure rate, fuel, crew duty and gates before any plan reaches a person. | 0 unsafe plans approved. |
 
 For the pitch, we compute total excess taxi-out minutes at the demo airport on weather-delayed days in 2015. That's each flight's `TAXI_OUT` minus the airport's normal taxi time, summed.
 
 ### What exists today
 
 Holding departures at the gate is a proven idea. NASA's ATD-2 trial at Charlotte used departure metering, and airlines estimated over 1 million gallons of fuel and nearly 11,500 tons of CO₂ saved in its first four years. The FAA is now rolling out surface metering in its Terminal Flight Data Manager (TFDM). Metering decides when each aircraft leaves the gate, but it doesn't negotiate trade-offs between organisations, so crew hours, gate conflicts and connections still go by phone. SkyQueue adds that negotiation, and our B1 baseline stands in for metering.
+
+### In the news and research
+
+Recent news shows the problem is getting worse, and research shows the idea SkyQueue builds on already works.
+
+| Date | Finding | Why it matters for SkyQueue | Source |
+| --- | --- | --- | --- |
+| May 2026 | The FAA cut its controller target to 12,563. It has about 11,000 certified controllers, so it's still about 1,560 short. Controllers worked 2.2 million overtime hours in 2024. | Fewer controllers means less time for phone calls about each exception. | [CP24, 15 May 2026](https://www.cp24.com/news/world/2026/05/15/faa-slashes-hiring-target-saying-it-can-keep-the-skies-safe-with-fewer-air-traffic-controllers-than-it-thought/) |
+| Apr 2026 | Newark had more than a dozen ground delay programs by early April, with more at Philadelphia, Boston, Chicago O'Hare, Dallas/Fort Worth and Houston. | Storm queues are happening now at the hubs SkyQueue targets. This is a secondary report, so we quote it as such. | [Nomad Lawyer, 9 Apr 2026](https://www.nomadlawyer.org/controller-shortage-raises-alarm-april-2026) |
+| Apr 2026 | The FAA's TFDM page lists less taxi time and fuel burn as benefits of surface metering, but gives no numbers. | There's no public figure to copy, so we measure our own against a metering-style baseline. | [FAA: TFDM benefits](https://www.faa.gov/air_traffic/technology/tfdm/benefits) |
+| 2017 to 2023 | Weather caused 74% of US delays over 15 minutes that affected the wider system, by the FAA's OPSNET data. | Weather is the biggest single cause, which is the case the challenge picks. | [FAA: Weather delay FAQ](https://www.faa.gov/nextgen/programs/weather/faq) |
+| 2022 | In ATD-2's first 4 years at Charlotte, airlines saved over 1 million gallons of fuel, almost 11,500 tons of CO₂, 5,948 hours of engine time and 916 hours of passenger delay. | Gate holds work. SkyQueue protects them when exceptions get in the way. | [NASA Spinoff](https://spinoff.nasa.gov/node/11424) |
+| 2009 | An MIT study of Boston Logan found average taxi-out rose from about 16 to 26 minutes as departures on the surface went from 8 or fewer to 17 or more. A simple gate-hold rule was estimated to save about 146,000 gallons a year on one runway layout. | Queue length drives fuel burn, so holding planes back pays off. These are simulation results. | [Simaiakis and Balakrishnan, MIT](https://www.mit.edu/~hamsa/pubs/SimaiakisBalakrishnanGNC2009.pdf) |
 
 ## Challenge requirements
 
@@ -287,16 +303,19 @@ Each judging criterion has a specific part of SkyQueue behind it.
 
 ## Impact
 
-Most of the fuel saving comes from holding aircraft at the gate, which metering does and ATD-2 proved at Charlotte. SkyQueue keeps that saving and handles the exceptions metering can't, so our headline numbers measure those exceptions.
+SkyQueue's outcome is fewer planes idling on the taxiway, fewer phone calls and no unsafe plan ever approved. Each one is measured on the same scenarios against today's order (B0) and a metering-style plan (B1).
 
-Headline numbers:
+| Outcome | How we measure it | Size |
+| --- | --- | --- |
+| Less fuel and CO₂ | Engine minutes moved from the taxiway to the gate, through the same timing calculator | About 9 kg of fuel and 28 kg of CO₂ per minute moved. One storm hour with 30 flights held 10 minutes each is about 2.7 t of fuel and 8.5 t of CO₂ (estimate) |
+| Fewer phone calls | Exceptions the agents settled, each of which takes a call today | Counted per scenario |
+| Fewer hidden constraints broken | Plans that break an ops-note constraint, across B1, B2 and SkyQueue | Counted per scenario |
+| Fewer missed connections | Passengers who miss a connection, against B0 and B1 | Counted per scenario |
+| No unsafe plans | Hard safety-rule breaks in approved plans | Must be 0 |
 
-- Hidden constraints broken, compared across B1, B2 and SkyQueue
-- Missed connections, compared with B0 and B1
-- Exceptions the agents settled, each of which needs a phone call today
-- Hard safety-rule breaks in approved plans, which must be zero
+At Charlotte, ATD-2's gate holds saved over 1 million gallons in 4 years. We use that as context for what holds can save, and we don't claim it as our result.
 
-Fuel and CO₂ come second, labelled as estimates and credited to gate-holding. SkyQueue would run in advisory mode beside existing metering tools, and the supervisor keeps full authority.
+SkyQueue would run in advisory mode beside existing metering tools, and the supervisor keeps full authority.
 
 ## Demo
 
@@ -351,8 +370,12 @@ We say these out loud in the demo:
 
 ## Sources
 
-- [NASA Spinoff: ATD-2 results at Charlotte](https://spinoff.nasa.gov/node/11424)
+- [NASA Spinoff: ATD-2 results at Charlotte (2022)](https://spinoff.nasa.gov/node/11424)
 - [NASA: Strategic Surface Metering at CLT (DASC 2020)](https://ntrs.nasa.gov/api/citations/20205004260/downloads/DASC2020_Strategic_Surface_Metering_at_CLT_FINAL.pdf)
 - [FAA: TFDM Surface Metering](https://www.faa.gov/air_traffic/technology/tfdm/sm)
+- [FAA: TFDM benefits (updated April 2026)](https://www.faa.gov/air_traffic/technology/tfdm/benefits)
 - [FAA: What is TFDM?](https://www.faa.gov/air_traffic/technology/tfdm/whatistfdm)
-- [FAA hiring target cut, May 2026](https://www.cp24.com/news/world/2026/05/15/faa-slashes-hiring-target-saying-it-can-keep-the-skies-safe-with-fewer-air-traffic-controllers-than-it-thought/)
+- [FAA: Weather delay FAQ (OPSNET, 2017 to 2023)](https://www.faa.gov/nextgen/programs/weather/faq)
+- [CP24: FAA cuts controller hiring target (15 May 2026)](https://www.cp24.com/news/world/2026/05/15/faa-slashes-hiring-target-saying-it-can-keep-the-skies-safe-with-fewer-air-traffic-controllers-than-it-thought/)
+- [Nomad Lawyer: Controller shortage and ground delays (9 April 2026)](https://www.nomadlawyer.org/controller-shortage-raises-alarm-april-2026)
+- [Simaiakis and Balakrishnan, MIT: Queuing models of airport departure processes (2009)](https://www.mit.edu/~hamsa/pubs/SimaiakisBalakrishnanGNC2009.pdf)
