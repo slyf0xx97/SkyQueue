@@ -22,11 +22,11 @@ st.markdown("""<style>
 @import url('https://fonts.googleapis.com/css2?family=Anybody:wdth,wght@50..150,400..900&family=Spline+Sans+Mono:wght@500;700&display=swap');
 [data-testid="stAppViewContainer"], [data-testid="stHeader"] { background: #121315; }
 [data-testid="stSidebar"], [data-testid="stSidebarCollapsedControl"], [data-testid="stToolbar"] { display: none; }
-.block-container { padding: 92px 1.5rem 0; max-width: 1480px; }
+.block-container { padding: 20px 1.5rem 0; max-width: 1480px; }
 .st-key-decisions { display: none; }
 .st-key-navbar { position: fixed; top: 0; left: 0; right: 0; z-index: 999980; height: 64px; }
 .st-key-navbar iframe { height: 64px !important; }
-.st-key-nav { position: fixed; top: 12px; right: 28px; z-index: 999990; width: 780px !important; background: transparent; border: 0; padding: 0; }
+.st-key-nav { position: fixed; top: 12px; right: 28px; z-index: 999990; width: min(940px, calc(100vw / var(--z, 1) - 600px)) !important; background: transparent; border: 0; padding: 0; }
 .st-key-nav [data-testid="stHorizontalBlock"] { gap: 10px !important; align-items: center; flex-wrap: nowrap; }
 .st-key-nav [data-testid="stVerticalBlock"] { gap: 0 !important; }
 .st-key-nav [data-testid="stElementContainer"], .st-key-nav [data-testid="stMarkdownContainer"] p { margin: 0 !important; }
@@ -35,7 +35,30 @@ st.markdown("""<style>
 .st-key-nav [data-baseweb="input"] { border: 2px solid #ffd400 !important; background: #121315; }
 .st-key-nav button { height: 40px !important; min-height: 40px !important; border-radius: 6px !important; padding: 0 16px !important; white-space: nowrap; }
 .st-key-nav [data-testid="stPopover"] button { width: 40px; padding: 0 !important; }
-.keytoggle { height: 40px; box-sizing: border-box; }
+.keytoggle { height: 40px; box-sizing: border-box; user-select: none; margin-top: -16px; }
+.st-key-nav [data-testid="stMarkdownContainer"], .st-key-nav .stMarkdown { display: flex; align-items: center; height: 40px; }
+.st-key-nav [data-testid="stColumn"] { display: flex; align-items: center; }
+.st-key-airport_pills button, [data-testid="stPills"] button { font: 700 14px 'Spline Sans Mono', monospace !important; padding: 8px 14px !important; }
+[data-testid="stButtonGroup"] > div { flex-wrap: wrap !important; overflow: visible !important; row-gap: 8px; }
+.sqload { position: fixed; inset: 0; z-index: 999995; background: #121315f2; display: flex; align-items: center; justify-content: center;
+  animation: sqfade .25s ease-out; font-family: 'Anybody', sans-serif; color: #f2f0ea; }
+@keyframes sqfade { from { opacity: 0; } }
+.sql-box { width: min(560px, 90vw); text-align: center; }
+.sql-brand { font: 900 30px 'Anybody', sans-serif; font-stretch: 118%; text-transform: uppercase; } .sql-brand span { color: #ffd400; }
+.sql-to { margin: 22px 0 18px; } .sql-to small { display: block; font: 700 12px 'Spline Sans Mono', monospace; letter-spacing: .16em; text-transform: uppercase; color: #8d9097; }
+.sql-to b { display: block; font: 900 84px/1 'Anybody', sans-serif; font-stretch: 120%; color: #ffd400; } .sql-to em { font-style: normal; font-size: 18px; color: #cfd0d3; }
+.sql-rwy { position: relative; height: 44px; margin: 0 auto 16px; border-radius: 4px; background:
+  radial-gradient(circle, #ffd400 0 3px, transparent 4px) 0 4px / 26px 10px repeat-x, radial-gradient(circle, #ffd400 0 3px, transparent 4px) 0 34px / 26px 10px repeat-x,
+  linear-gradient(#ffffffaa, #ffffffaa) 0 21px / 100% 2px no-repeat, #0b0c0d; animation: sqlights .6s linear infinite; overflow: hidden; }
+@keyframes sqlights { to { background-position: 26px 4px, 26px 34px, 0 21px, 0 0; } }
+.sql-plane { position: absolute; top: 4px; left: -40px; font-size: 30px; color: #f2f0ea; animation: sqtaxi 2.2s cubic-bezier(.5,0,.4,1) infinite; text-shadow: -10px 0 14px #ff6b1a; }
+@keyframes sqtaxi { to { left: 105%; } }
+.sqload p { margin: 0; font-size: 15px; color: #8d9097; }
+.block-container { zoom: var(--z, 1); }
+.st-key-nav [data-testid="InputInstructions"] { display: none; }
+.bigscreen { display: none; }
+@media (max-width: 759px) { .bigscreen { display: flex; position: fixed; inset: 0; z-index: 1000000; background: #121315; color: #f2f0ea; flex-direction: column; align-items: center; justify-content: center; gap: 14px; padding: 32px; text-align: center; font-family: 'Anybody', sans-serif; } .bigscreen b { font: 900 34px 'Anybody', sans-serif; font-stretch: 118%; text-transform: uppercase; } .bigscreen b span { color: #ffd400; } .bigscreen p { max-width: 30em; font-size: 17px; line-height: 1.5; color: #cfd0d3; margin: 0; } }
+@media (max-width: 1400px) { .keytoggle .kt { display: none; } .st-key-nav button[kind="primary"] { font-size: 12px !important; padding: 0 10px !important; } }
 .st-key-bridge { display: none; }
 .keytoggle { display: flex; align-items: center; gap: 8px; padding: 0 12px 0 8px; border-radius: 6px; font: 700 11px 'Spline Sans Mono', monospace; letter-spacing: .08em; text-transform: uppercase; white-space: nowrap; }
 .keytoggle .knob { width: 34px; height: 18px; border-radius: 999px; position: relative; flex: none; }
@@ -59,7 +82,8 @@ iframe { border: 0; display: block; }
 .dset-h { font: 700 11px 'Spline Sans Mono', monospace; letter-spacing: .12em; text-transform: uppercase; color: #5ccf8a; margin-bottom: 8px; }
 .dchip { display: flex; align-items: center; gap: 10px; padding: 6px 0; font-size: 14px; color: #cfd0d3; }
 .dchip svg { width: 22px; height: 22px; flex: none; } .dchip b { font-family: 'Spline Sans Mono', monospace; color: #f2f0ea; margin-right: 6px; }
-.st-key-setup { border-top: 4px solid #ffd400 !important; } .setup-p { color: #cfd0d3; margin: 0 0 12px; font-size: 15px; }
+.st-key-setup { border-top: 4px solid #ffd400 !important; padding-bottom: 22px !important; margin-bottom: -6px; }
+.st-key-decisions, .st-key-bridge { position: absolute !important; height: 0 !important; overflow: hidden; } .setup-p { color: #cfd0d3; margin: 0 0 12px; font-size: 15px; }
 .wx { background: #232428; border-radius: 6px; padding: 14px 16px; color: #f2f0ea; font-family: 'Anybody', sans-serif; }
 .wx .cat { display: inline-block; font: 800 13px 'Spline Sans Mono', monospace; padding: 3px 9px; border-radius: 3px; color: #121315; }
 .wx .big { font: 900 30px 'Anybody', sans-serif; font-stretch: 112%; }
@@ -72,7 +96,7 @@ iframe { border: 0; display: block; }
 .wx .wl { color: #8d9097; font: 700 12px 'Spline Sans Mono', monospace; letter-spacing: .1em; text-transform: uppercase; }
 .wx .wv { font: 700 17px 'Spline Sans Mono', monospace; color: #f2f0ea; }
 .wx .wnow { margin-top: 10px; padding: 10px 12px; border-radius: 4px; font-weight: 700; font-size: 15px; }
-.wsrc { display: grid; grid-template-columns: 90px 1fr; row-gap: 4px; margin-top: 10px; font-size: 14px; color: #cfd0d3; }
+.wsrc { display: grid; grid-template-columns: 90px 1fr; row-gap: 4px; margin: 10px 0 18px; font-size: 14px; color: #cfd0d3; }
 .wsrc span { font: 700 11px 'Spline Sans Mono', monospace; letter-spacing: .1em; text-transform: uppercase; color: #8d9097; padding-top: 2px; }
 .wsrc a { color: #ffd400; }
 .wx .wnow.calm { background: #5ccf8a1f; color: #5ccf8a; } .wx .wnow.storm { background: #ff5a4e26; color: #ff8a80; }
@@ -85,7 +109,7 @@ PLAIN = {"WAKE-01": "aircraft too close on the runway", "RATE-01": "too many dep
 MODELS = {"Claude API": ["claude-opus-5-5", "claude-sonnet-5-5", "claude-haiku-5-5"],
           "OpenRouter": ["anthropic/claude-opus-5.5", "anthropic/claude-sonnet-5.5", "anthropic/claude-haiku-5.5"]}
 CHANNEL = {"Crew": "ACARS", "Ramp": "Ramp radio", "Dispatch": "Ops chat", "Pilot report": "PIREP", "Ops chat": "Ops chat",
-           "You": "Web form"}
+           "You": "Web form", "Supervisor": "Web form"}
 CAT_COLOUR = {"VFR": "#5ccf8a", "MVFR": "#6aa8ff", "IFR": "#ff5a4e", "LIFR": "#d36bff"}
 CAT_MEANING = {"VFR": "Visual flight rules: clear, good visibility", "MVFR": "Marginal: lower cloud or haze",
                "IFR": "Instrument rules: low cloud or poor visibility", "LIFR": "Low instrument rules: very low cloud or fog"}
@@ -203,6 +227,7 @@ def page(name: str, data) -> str:
     for tag, f in (("/*BASE*/", "base.css"), ("/*APP*/", "app.css")):
         html = html.replace(tag, (WEB / f).read_text(encoding="utf-8"))
     html = html.replace("<!--SYMBOLS-->", (WEB / "symbols.html").read_text(encoding="utf-8") + (WEB / "sprites.html").read_text(encoding="utf-8"))
+    html = html.replace("<!--ARCH-->", (WEB / "arch.html").read_text(encoding="utf-8")) if "<!--ARCH-->" in html else html
     return html.replace("/*DATA*/", json.dumps(data))
 
 
@@ -216,8 +241,19 @@ with st.container(key="decisions"):
             if st.button(f"{what}::{airport}::{name}"):
                 RunLog.attach(current_run(name, airport)).decide(f"{what}D")
 
-with st.spinner(f"Loading storm days at {info['city']}…"):
-    samples = {k: sample(k, airport) for k in DEMOS}
+loading = st.empty()
+if st.session_state.get("loaded_airport") != airport:
+    loading.markdown(f"""<div class="sqload"><div class="sql-box">
+<div class="sql-brand">Sky<span>Queue</span></div>
+<div class="sql-to"><small>Taxiing to</small><b>{airport}</b><em>{info["name"]}</em></div>
+<div class="sql-rwy"><span class="sql-plane">✈</span></div>
+<p>Loading three real storm days from the 2015 data, the ops inbox and the agents' plans…</p>
+</div></div>""", unsafe_allow_html=True)
+samples = {k: sample(k, airport) for k in DEMOS}
+st.session_state.loaded_airport = airport
+loading.empty()
+
+st.markdown('<div class="bigscreen"><b>Sky<span>Queue</span></b><p>SkyQueue needs a bigger screen. Open it on a laptop or desktop or widen this window.</p></div>', unsafe_allow_html=True)
 
 # ---------- pinned header ----------
 with st.container(key="navbar"):
@@ -226,7 +262,7 @@ with st.container(key="navbar"):
 # ---------- hero ----------
 components.html(page("hero.html", dict(order=list(DEMOS), airport=info["city"],
                                        samples={k: {x: v[x] for x in ("name", "blurb", "icon")} for k, v in samples.items()})),
-                height=760, scrolling=False)
+                height=664, scrolling=False)
 
 # ---------- your setup: airport, flight, live weather ----------
 with st.container(key="setup"):
@@ -234,19 +270,18 @@ with st.container(key="setup"):
     with left:
         st.markdown(f'''<p class="setup-h">Choose your <span>airport</span></p>
 <div class="nowat"><span class="pin">📍</span><div><small>Now showing</small><b>{airport}</b><em>{info["name"]}</em></div></div>
-<p class="setup-p">Pick any of the 8 airports with the most delayed departures. Every sample replays one of its real storm days.</p>
-<div class="dset"><div class="dset-h">Built on the challenge dataset</div>
-<div class="dchip">{DS_ICON["db"]}<span><b>flights.csv</b> 2015 US DOT on-time data · 358,774 delay records</span></div>
-<div class="dchip">{DS_ICON["pin"]}<span><b>airports.csv</b> 322 airports</span></div>
-<div class="dchip">{DS_ICON["plane"]}<span><b>airlines.csv</b> 14 airlines</span></div></div>''', unsafe_allow_html=True)
-        pick = st.selectbox("Airport", AIRPORTS, index=AIRPORTS.index(airport),
-                            format_func=lambda c: f"{c} · {airport_info(c)['name']}")
-        if pick != airport:
+<p class="setup-p">Click an airport below. These are the 8 airports with the most delayed departures in the data; each sample replays one of its real storm days.</p>
+''', unsafe_allow_html=True)
+        pick = st.pills("Airport", AIRPORTS, default=airport, key="airport_pills", label_visibility="collapsed",
+                        format_func=lambda c: f"{c}  {airport_info(c)['city']}")
+        if pick and pick != airport:
             st.session_state.airport = pick
             st.rerun()
-        ids = [f["id"] for f in samples["demo1"]["flights"]]
-        focus = st.selectbox("Flight", ["—"] + ids, key="focus_pick",
-                             help="Jump to any flight's line in the plan: what it does, who proposed it and which rules it passed.")
+        st.markdown(f'''<div class="dset"><div class="dset-h">Built on the challenge dataset</div>
+<div class="dchip">{DS_ICON["db"]}<span><b>flights.csv</b> 2015 US DOT on-time data, 358,774 delay records</span></div>
+<div class="dchip">{DS_ICON["pin"]}<span><b>airports.csv</b> 322 airports</span></div>
+<div class="dchip">{DS_ICON["plane"]}<span><b>airlines.csv</b> 14 airlines</span></div></div>''', unsafe_allow_html=True)
+        focus = "—"
     with right:
         w = weather(info["icao"])
         if w:
@@ -291,7 +326,7 @@ if raw:
 # ---------- top right: the API key, always in view ----------
 with st.container(key="nav"):
     key_on = bool(st.session_state.get("api_key", "").strip())
-    a, b, c, d = st.columns([1.35, 2.5, 1.9, .42], vertical_alignment="center")
+    a, b, c, d = st.columns([1.2, 3.6, 1.9, .42], vertical_alignment="center")
     a.markdown(f'<div class="keytoggle {"on" if key_on else "off"}"><span class="knob"></span>'
                f'<span class="kt">{"API key on" if key_on else "API key off"}</span></div>', unsafe_allow_html=True)
     b.text_input("API key", key="api_key", type="password", label_visibility="collapsed",
@@ -309,7 +344,7 @@ with st.container(key="nav"):
                                         help="Bigger models reason better; smaller ones answer faster and cost less.")
         workspace = st.text_input("Workspace ID (optional)", help="Only if your Claude key isn't tied to a workspace.") \
             if provider == "Claude API" else None
-        which = st.selectbox("Scenario", list(DEMOS), format_func=lambda k: f"{samples[k]['name']} · {airport}", key="livewhich")
+        which = st.selectbox("Scenario", list(DEMOS), format_func=lambda k: f"{samples[k]['name']}, {airport}", key="livewhich")
         st.caption(f"{len(inbox(airport, which, queued_only=True))} queued inbox message(s) will be read.")
 if go:
     k = st.session_state["api_key"].strip()

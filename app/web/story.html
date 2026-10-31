@@ -25,7 +25,7 @@
   <tbody id="notes"></tbody></table></div></div>
 </div>
 
-<div class="feed" id="feed"><div class="pipe"></div><div class="feedbox"><b>Handed to the agents</b><span class="lab">accepted messages, now rules for step 2</span><div class="feedchips" id="feedchips"></div></div><div class="pipe"></div></div>
+<div class="feed2" aria-hidden="true"><i class="d1"></i><i class="h"></i><i class="d2"></i><b class="tip2">rules feed the agents</b></div>
 <div class="step" id="st2"><span class="n">2</span><h3>The agents negotiate</h3>
   <span class="i" tabindex="0" data-tip="Round 1: Tower proposes. The safety rules check the plan before anyone else sees it. Pilot and Ground then accept, ask for a change, or reject. Up to 3 rounds; no deal means a backup plan built by code. On the right, the agreed plan plays out.">i</span>
   <div class="ctl" style="margin-left:auto"><div class="clock" id="clock">--:--</div><button class="btn" id="pause">Pause</button></div></div>
@@ -36,21 +36,24 @@
     <div class="rulebook" id="rulebook" title="Rules from step 1"></div>
     <svg class="wire" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M14 38 L47 38"/><path d="M47 38 L82 18"/><path d="M47 38 L84 56"/></svg>
     <div class="seat T" style="left:14%;top:38%"><svg viewBox="0 0 16 16"><use href="#ch-T"/></svg><b>Tower</b></div>
-    <div class="gate"><div class="shield" id="shield">?</div><b>Safety rules</b><span class="sub2">8 rules + notes · plain code
+    <div class="gate"><div class="shield" id="shield">?</div><b>Safety rules</b><span class="sub2">8 rules + notes, plain code
       <span class="i down" tabindex="0" data-tip="Every plan is checked against the 8 rules listed below plus every ops message accepted in step 1. A plan that breaks one goes back to Tower; Pilot and Ground never see it.">i</span></span><small id="gateMsg"></small></div>
     <div class="seat P" style="left:82%;top:18%"><svg viewBox="0 0 16 16"><use href="#ch-P"/></svg><b>Pilot</b></div>
     <div class="seat G" style="left:84%;top:56%"><svg viewBox="0 0 16 16"><use href="#ch-G"/></svg><b>Ground</b></div>
-    <div class="chat" id="chat" role="button" tabindex="0" aria-label="Open the full transcript"><div class="chat-h"><span>All · negotiation</span><em>⤢ expand</em></div><div class="chat-lines" id="chatLines"></div></div>
+    <div class="chat" id="chat" role="button" tabindex="0" aria-label="Open the full transcript"><div class="chat-h"><span>Negotiation</span><em>⤢ expand</em></div><div class="chat-lines" id="chatLines"></div></div>
   </div>
   <div class="rules panel"><div class="rules-h"><b>Safety rules</b><span>plain code, checked on every plan</span></div>
     <div class="rgrid"><div class="rule" id="rule-WAKE-01"><span class="mono">WAKE-01</span>Enough gap between take-offs for wake turbulence</div><div class="rule" id="rule-RATE-01"><span class="mono">RATE-01</span>No more take-offs than the storm allows per 15 min</div><div class="rule" id="rule-TAXI-01"><span class="mono">TAXI-01</span>No more planes on the taxiway than it can hold</div><div class="rule" id="rule-FUEL-01"><span class="mono">FUEL-01</span>Enough fuel left after taxiing</div><div class="rule" id="rule-DUTY-01"><span class="mono">DUTY-01</span>Take-off before the crew runs out of duty hours</div><div class="rule" id="rule-GATE-01"><span class="mono">GATE-01</span>Gate free before its arriving plane needs it</div><div class="rule" id="rule-GATE-02"><span class="mono">GATE-02</span>No engines-off wait at a gate without ground power</div><div class="rule" id="rule-CREW-01"><span class="mono">CREW-01</span>Ramp crew on shift at pushback</div><div class="rule plus" id="rule-NOTE"><span class="mono">+ NOTES</span>Every ops note accepted in step 1</div></div></div>
+  <div class="addbar"><button type="button" class="btn" id="addRuleBtn">+ Add a rule</button><button type="button" class="btn" id="addNoteBtn">+ Add a note</button></div>
+  <form class="addrule" id="addrule" hidden><label>Rule<select id="r-type"><option value="NO_GATE_HOLD">No waiting at this gate</option><option value="GATE_UNAVAILABLE">Gate closed</option><option value="DUTY_LIMIT">Crew duty ends soon</option><option value="PRIORITY_CONNECTION">Priority connection</option><option value="TURBULENCE">Turbulence, extra spacing</option></select></label><label>Flight or gate<input id="r-ref" list="r-refs" maxlength="12" required placeholder="e.g. UA552 or B12"></label><datalist id="r-refs"></datalist><label>Detail (optional)<input id="r-note" maxlength="120" placeholder="e.g. ground power is out"></label><button class="go" type="submit">Add rule</button><span class="lab" id="r-ok"></span>
+    <p>It joins the ops inbox as a Supervisor message marked Queued. The next live run reads it, and code checks it before it becomes a rule.</p></form>
   <div class="result" id="result"></div>
   </div>
   <div class="col">
   <div class="ap panel after big"><div class="band"><b>After</b><span>Planes wait at the gate, engines off</span><span class="tagx">SkyQueue plan</span></div><svg id="a1" viewBox="0 0 900 400"></svg>
     <div class="apstat"><div><small>Taxi fuel</small><b id="n1">0 kg</b><span class="mini"><i id="f1"></i></span></div>
       <div><small>Engines on</small><b id="m1">0</b><span class="mini"><i id="e1"></i></span></div>
-      <div class="sv"><small>Saved so far</small><b id="saved">0 kg</b><em><span id="co2">0</span> kg CO₂ · estimate</em></div></div></div>
+      <div class="sv"><small>Saved so far</small><b id="saved">0 kg</b><em><span id="co2">0</span> kg CO₂, estimate</em></div></div></div>
   <div class="ap panel before under"><div class="band"><b>Before</b><span>Everyone pushes back and queues, engines running</span><span class="tagx">Recorded 2015</span></div><svg id="a0" viewBox="0 0 900 400"></svg>
     <div class="apstat"><div><small>Taxi fuel</small><b id="n0">0 kg</b><span class="mini"><i id="f0"></i></span></div>
       <div><small>Engines on</small><b id="m0">0</b><span class="mini"><i id="e0"></i></span></div></div></div>
@@ -64,21 +67,35 @@
   <span class="i" tabindex="0" data-tip="Compare the plan with what really happened, check any flight, then approve or reject. Nothing is released until you approve, and your decision is written to the audit log with the time.">i</span></div>
 <div class="decide2 two">
   <div class="fc panel" id="fc"></div>
-  <div class="decide panel"><button class="go" id="approve" disabled>Approve plan</button><button class="btn" id="reject" disabled>Reject</button><span class="msg" id="dmsg"></span><span class="hs"></span></div>
+  <div class="decide panel"><button class="go" id="approve" disabled>Approve departure plan</button><button class="btn" id="reject" disabled>Reject</button><div class="whatyou" id="whatyou"></div><span class="msg" id="dmsg"></span></div>
 </div>
 
-<section class="how panel">
+<section class="how panel" id="how">
   <div class="how-head"><h2>How it <span>works</span></h2>
-    <div class="keys"><span><i style="background:var(--vis)"></i>AI suggests</span><span><i style="background:var(--line)"></i>Code decides</span><span><i style="background:var(--chalk)"></i>You approve</span></div>
     <div class="ctl"><button class="btn" id="hpause">Pause</button><button class="btn" id="hreset">Reset</button></div></div>
-  <div class="stage" id="stage"><svg viewBox="0 0 1400 600">
-    <path class="route-edge" d="M60 260 L1340 260"/><path class="route" id="route" d="M60 260 L1340 260"/>
-    <path class="loop" d="M920 262 C920 300 790 300 790 262"/><text class="lbl" x="855" y="318" text-anchor="middle">↺ Blocked · try again</text>
-    <path class="loop" style="stroke:var(--line)" d="M1000 262 C1020 360 1030 520 1060 545"/><text class="lbl" x="1068" y="552" style="fill:var(--line)">No deal → backup plan</text>
-    <g id="stops"></g>
-    <g class="plane" id="plane"><ellipse class="heat" cx="0" cy="22" rx="8" ry="13"/><path d="M0 -22 C3 -22 4 -18 4 -13 L4 -4 L22 5 L22 9 L4 5 L4 14 L9 19 L9 22 L0 20 L-9 22 L-9 19 L-4 14 L-4 5 L-22 9 L-22 5 L-4 -4 L-4 -13 C-4 -18 -3 -22 0 -22Z"/></g>
-  </svg></div>
+  <div class="how2">
+    <div class="vroute" id="stage">
+      <svg class="vline" preserveAspectRatio="none"><path class="route-edge" id="routeEdge"/><path class="route" id="route"/>
+        </svg>
+      <div id="vcards"></div>
+      <svg class="vline vplane" preserveAspectRatio="none"><g class="plane" id="plane"><ellipse class="heat" cx="0" cy="-22" rx="8" ry="13"/><path d="M0 -22 C3 -22 4 -18 4 -13 L4 -4 L22 5 L22 9 L4 5 L4 14 L9 19 L9 22 L0 20 L-9 22 L-9 19 L-4 14 L-4 5 L-22 9 L-22 5 L-4 -4 L-4 -13 C-4 -18 -3 -22 0 -22Z"/></g></svg>
+    </div>
+    <div class="archbox panel"><div class="ah"><b>The architecture</b><span>one airport, start to finish</span></div>
+<!--ARCH-->
+      <div class="archkey"><span><i style="background:#f2f0ea30;border:2px solid var(--chalk)"></i>AI model</span><span><i style="border:2px solid #ffffff60"></i>Plain code</span>
+        <span><i style="background:var(--vis)"></i>No-AI backup</span><span>Python, pandas, Claude API: Pydantic, Streamlit, SQLite, pytest</span></div></div>
+  </div>
 </section>
+
+<footer class="foot panel">
+  <div class="foot-grid">
+    <div><div class="brand">Sky<span>Queue</span></div><p>Autonomous multi-agent AI for storm-delayed departure queues. Three AI agents coordinate tower, airline and ramp; plain code checks every plan; a person approves.</p></div>
+    <div><h5>Data</h5><ul><li>2015 US DOT flight delays (challenge dataset)</li><li>airports.csv, airlines.csv</li><li>Live weather: NOAA Aviation Weather Center</li><li>Ops messages, gates and crew hours: made-up, labelled</li></ul></div>
+    <div><h5>Built with</h5><ul><li>Claude API: Pydantic</li><li>Python, pandas, pytest</li><li>Streamlit, SQLite</li><li>Cloudflare Tunnel</li></ul></div>
+    <div><h5>Project</h5><ul><li><a href="https://github.com/slyf0xx97/SkyQueue" target="_blank" rel="noopener">Source on GitHub</a></li><li>Autonomous SG 2026</li><li>Airbus Challenge #2</li></ul></div>
+  </div>
+  <div class="foot-bottom"><span>© 2026 Ghernie</span></div>
+</footer>
 
 <script>
 const ALL = /*DATA*/;
@@ -120,7 +137,7 @@ function drawApron(svg, side) {
     el('rect', { class: 'stand', x: x - 14, y: STAND_Y - 16, width: 28, height: 32 }, svg);
     el('text', { class: 'gl', x, y: STAND_Y + 32, 'text-anchor': 'middle' }, svg).textContent = k;
   });
-  const tw = el('svg', { x: 700, y: 250, width: 110, height: 110, viewBox: '0 0 16 16' }, svg); el('use', { href: '#ch-T' }, tw);
+  const tw = el('svg', { x: 250, y: 262, width: 100, height: 100, viewBox: '0 0 16 16' }, svg); el('use', { href: '#ch-T' }, tw);
   const q = side === 0 ? el('text', { class: 'qcount', x: 420, y: TAXI_Y + 40, 'text-anchor': 'middle' }, svg) : null;
   const layer = el('g', {}, svg);
   const crew = side === 1 ? el('g', { opacity: 0 }, svg) : null;
@@ -164,30 +181,38 @@ function noteCard(n) {
 function queuedRow(n) {
   return `<tr class="mine queued"><td class="mono">${n.id}</td><td class="mono">${esc(n.received)}</td><td>${dept(n.source)} <span class="yours2">You</span></td>
     <td class="dim">${esc(n.channel)}</td><td class="mono">${esc(n.ref || '—')}</td><td class="msg">${esc(n.text)}</td><td class="dim">—</td><td class="dim">—</td>
-    <td><span class="pill q">Queued · run live</span></td></tr>`;
+    <td><span class="pill q">Queued, run live</span></td></tr>`;
 }
 const DEPT = { Crew: ['crew', 'i-clock'], Ramp: ['ramp', 'i-plug'], Dispatch: ['disp', 'i-link'], 'Pilot report': ['pirep', 'i-wind'],
-  'Ops chat': ['chat', 'i-note'], You: ['you', 'i-note'] };
+  'Ops chat': ['opschat', 'i-note'], You: ['you', 'i-note'], Supervisor: ['sup', 'i-note'] };
 function dept(src) { const [c, ic] = DEPT[src] || DEPT['Ops chat']; return `<span class="dept ${c}"><svg viewBox="0 0 64 64"><use href="#${ic}"/></svg>${esc(src)}</span>`; }
 function conf(n) {
   const flag = n.p_override >= .5, p = Math.round((flag ? n.p_override : n.p_type) * 100), ok = flag || n.p_type >= .6;
   $(`c-${n.id}`).innerHTML = `<span class="meter"><i style="width:${p}%" class="${ok ? 'hi' : 'lo'}"></i><b></b></span><span class="mono ${ok ? '' : 'lo'}">${p}%</span>`;
 }
-document.addEventListener('submit', e => {
-  if (e.target.id !== 'sendmsg') return; e.preventDefault();
-  const text = $('m-text').value.trim(); if (!text) return;
+function toInbox(source, ref, text, ok) {
   const bridge = parent.document.querySelector('.st-key-bridge input');
-  if (!bridge) { $('m-ok').textContent = 'Could not reach the inbox.'; return; }
+  if (!bridge) { ok.textContent = 'Could not reach the inbox.'; return; }
   const set = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set;
-  set.call(bridge, JSON.stringify({ to: key, source: $('m-src').value, ref: $('m-ref').value, text, n: Date.now() }));
+  set.call(bridge, JSON.stringify({ to: key, source, ref, text, n: Date.now() }));
   bridge.dispatchEvent(new Event('input', { bubbles: true }));
   bridge.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', code: 'Enter', keyCode: 13, which: 13, bubbles: true }));
-  $('m-ok').textContent = 'Added. Saving…';
+  ok.textContent = 'Added. Saving…';
+}
+const RULE_TEXT = { NO_GATE_HOLD: r => `No gate hold at ${r}, no ground power there.`, GATE_UNAVAILABLE: r => `Gate ${r} is closed, do not use it.`,
+  DUTY_LIMIT: r => `${r} crew is close to the duty limit, needs to go first.`, PRIORITY_CONNECTION: r => `${r} has a priority connection, keep it on time.`,
+  TURBULENCE: r => `Turbulence reported, keep extra spacing behind ${r}.` };
+document.addEventListener('submit', e => {
+  if (e.target.id === 'sendmsg') { e.preventDefault(); const text = $('m-text').value.trim(); if (text) toInbox($('m-src').value, $('m-ref').value, text, $('m-ok')); }
+  if (e.target.id === 'addrule') { e.preventDefault(); const ref = $('r-ref').value.trim(), extra = $('r-note').value.trim(); if (!ref) return;
+    toInbox('Supervisor', ref, `Supervisor rule: ${RULE_TEXT[$('r-type').value](ref)}${extra ? ' ' + extra : ''}`, $('r-ok')); }
 });
+$('addRuleBtn').onclick = () => { $('addrule').hidden = !$('addrule').hidden; if (!$('addrule').hidden) $('r-ref').focus(); fit(); };
+$('addNoteBtn').onclick = () => { $('sendmsg').scrollIntoView({ behavior: 'smooth', block: 'center' }); $('m-text').focus({ preventScroll: true }); };
 function stamp(n) { const [, c, w] = verdict(n); $(`s-${n.id}`).innerHTML = `<span class="pill ${c}">${{ ok: '✓', flag: '✕', amb: '?' }[c]} ${w}</span>`; }
 function readerSays(n) {
-  if (n.p_override >= .5) return `asks to skip a rule · ${n.p_override.toFixed(2)}`;
-  return `${human(n.type)}${n.target ? ' · ' + n.target : ''} · ${n.p_type.toFixed(2)}`;
+  if (n.p_override >= .5) return `asks to skip a rule, ${n.p_override.toFixed(2)}`;
+  return `${human(n.type)}${n.target ? ', ' + n.target : ''}, ${n.p_type.toFixed(2)}`;
 }
 function checkerSays(n) {
   return { FLAGGED: `<span class="no">✕ tries to break a rule → ignored</span>`, AMBIGUOUS: `<span class="amb">? not sure enough (${n.p_type.toFixed(2)}) → held back</span>`,
@@ -262,8 +287,7 @@ $('logClose').onclick = () => { $('logModal').hidden = true; };
 $('logModal').onclick = e => { if (e.target.id === 'logModal') $('logModal').hidden = true; };
 function noteRules() {
   const acc = D.notes.filter(n => n.status === 'ACCEPTED' && n.type !== 'NONE');
-  const chip = n => `<span class="nchip" id="rule-${n.id}"><span class="mono">${n.id}</span>${human(n.type)} · ${esc(n.target)}</span>`;
-  $('feedchips').innerHTML = acc.map(chip).join('') || '<span class="lab">No messages became rules</span>';
+  const chip = n => `<span class="nchip" id="rule-${n.id}"><span class="mono">${n.id}</span>${human(n.type)}, ${esc(n.target)}</span>`;
   $('rulebook').innerHTML = `<b>From step 1</b> ${acc.length} rule${acc.length === 1 ? '' : 's'}: ` + acc.map(n => `<span class="mono">${n.id}</span>`).join(' ');
   const plus = $('rule-NOTE'); if (plus) plus.innerHTML = `<span class="mono">+ NOTES</span><span class="nlist">${acc.map(chip).join('').replaceAll('id="rule-', 'id="rr-')}</span>`;
 }
@@ -279,7 +303,7 @@ async function negotiate(id) {
     if (m.type === 'PROPOSE' && m.has_plan) {
       document.querySelectorAll('.rule.hit, .nchip.hit').forEach(e => e.classList.remove('hit'));
       $('shield').className = 'shield'; $('shield').textContent = '?'; $('gateMsg').textContent = '';
-      const p = packet(`Plan · round ${m.round}`, '', 'T'); await sleep(500); moveTo(p, 'C'); await sleep(800);
+      const p = packet(`Plan, round ${m.round}`, '', 'T'); await sleep(500); moveTo(p, 'C'); await sleep(800);
       if (m.blocked) {
         $('shield').className = 'shield no'; $('shield').textContent = '✕'; $('gateMsg').textContent = m.blocked_text;
         (m.blocked_ids || []).forEach(r => { const e = $(r.startsWith('NOTE-') ? 'rr-' + r.slice(5) : 'rule-' + r); if (e) e.classList.add('hit'); });
@@ -308,19 +332,20 @@ async function load(mode) {
   $('title').textContent = D.name;
   const day = new Date(D.date + 'T00:00:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
   $('meta').innerHTML = [
-    D.live ? `<span class="fact live">● Live · ${esc(D.live)}</span>` : `<span class="fact rec">● Recorded run</span>`,
+    D.live ? `<span class="fact live">● Live: ${esc(D.live)}</span>` : `<span class="fact rec">● Recorded run</span>`,
     `<span class="fact"><small>Airport</small>${esc(D.airport_name)}</span>`, `<span class="fact"><small>Date</small>${day}</span>`,
     `<span class="fact"><small>Departures</small>${D.flights.length}</span>`, `<span class="fact"><small>Runway rate</small>${D.rate} / 15 min</span>`].join('');
   $('notes').innerHTML = D.notes.map(noteCard).join('') + (D.queued || []).map(queuedRow).join('');
+  $('r-refs').innerHTML = [...new Set(D.flights.flatMap(f => [f.id, f.gate]))].map(v => `<option value="${esc(v)}">`).join('');
   $('deptkey').innerHTML = ['Crew', 'Ramp', 'Dispatch', 'Pilot report', 'Ops chat'].map(dept).join('');
-  $('ibCount').textContent = `${D.notes.length} messages${D.queued && D.queued.length ? ` · ${D.queued.length} queued` : ''}`;
+  $('ibCount').textContent = `${D.notes.length} messages${D.queued && D.queued.length ? `, ${D.queued.length} queued` : ''}`;
   $('c-ag').textContent = 0; $('c-log').textContent = 0; ['say-in', 'say-rd', 'say-ck'].forEach(k => $(k).textContent = '');
   $('log').innerHTML = ''; $('chatLines').innerHTML = ''; $('logModal').hidden = true; noteRules();
   document.querySelectorAll('.packet,.bubble').forEach(e => e.remove());
   $('shield').className = 'shield'; $('shield').textContent = '?'; $('gateMsg').textContent = '';
   const rs = $('result'); rs.className = 'result ' + (D.outcome.source === 'AGREED' ? 'ok' : 'bk');
-  rs.textContent = D.outcome.source === 'AGREED' ? `✓ All three agree · round ${D.outcome.round}` : '! No deal · code builds a backup plan';
-  select((D.flights.find(f => f.notes.length) || D.flights[0]).id); setDecision(); fit();
+  rs.textContent = D.outcome.source === 'AGREED' ? `✓ All three agree, round ${D.outcome.round}` : '! No deal, code builds a backup plan';
+  overview(); sel = null; setDecision(); fit(); parent.document.getElementById('sqload-js')?.remove();
   if (mode === 'idle') return;
   if (mode === 'done') { reveal(); return; }
   $('st1').scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -337,7 +362,7 @@ function reveal() {
   $('result').classList.add('on'); phase = 'fly'; playing = true; t = D.t0; setDecision();
 }
 const lightUp = () => { try { parent.document.documentElement.classList.add('rwy-lit'); } catch (e) {} };
-window.SQ = { play(k) { if (ALL.samples[k]) key = k; lightUp(); load('play'); }, how() { document.querySelector('.how').scrollIntoView({ behavior: 'smooth', block: 'start' }); } };
+window.SQ = { play(k) { if (ALL.samples[k]) key = k; lightUp(); load('play'); }, how() { document.getElementById('how').scrollIntoView({ behavior: 'smooth', block: 'start' }); } };
 
 let last = performance.now();
 function frame(now) {
@@ -384,25 +409,120 @@ function frame(now) {
 requestAnimationFrame(frame);
 $('pause').onclick = () => { playing = !playing; $('pause').textContent = playing ? 'Pause' : 'Play'; };
 
-document.addEventListener('change', e => { if (e.target.id === 'flightSel') select(e.target.value); });
-function select(id) {
-  sel = id; const g = D.flights.find(f => f.id === id);
-  const act = { PUSH: 'Pushes back when ready', GATE_HOLD: `Waits at gate ${g.gate} until ${g.until}`, REASSIGN_GATE: `Moves to stand ${g.stand}, waits until ${g.until}` }[g.action];
-  const saved = g.today_taxi - g.plan_taxi;
-  const opts = D.flights.map(f => `<option value="${esc(f.id)}"${f.id === id ? ' selected' : ''}>${esc(f.id)} · ${{ PUSH: 'push', GATE_HOLD: 'waits at gate', REASSIGN_GATE: 'moves to stand' }[f.action]}</option>`).join('');
-  $('fc').innerHTML = `<label class="lab" for="flightSel">Pick a flight</label><select id="flightSel" class="fsel">${opts}</select><div class="lab" style="margin-top:10px">Selected flight <span class="i left" tabindex="0" data-tip="Every line of the plan links back to the message that proposed it, the agents that agreed, the notes it relies on and each safety rule it passed.">i</span></div><div class="id">${esc(g.id)}</div><div class="act">${act}</div>
-    <div class="row"><span>Engines-on taxi</span><span class="mono">${g.today_taxi} → ${g.plan_taxi} min ${saved > 0 ? `<span style="color:var(--ok)">−${saved}</span>` : ''}</span></div>
-    <div class="row"><span>Proposed by</span><span>${g.proposer === 'BACKUP' ? 'Backup plan' : `<span class="ag ${g.proposer[0]}">${g.proposer[0]}</span> round ${g.round}`}</span></div>
-    <div class="row"><span>Agreed by</span><span>${g.agreed_by.map(a => `<span class="ag ${a[0]}">${a[0]}</span>`).join(' ') || '—'}</span></div>
-    <div class="row"><span>Ops notes</span><span>${g.notes.map(n => `<span class="chip">${n}</span>`).join(' ') || '—'}</span></div>
-    <div class="row"><span>Safety rules</span><span>${g.fails.length ? g.fails.map(f => `<span class="chip bad">${f}</span>`).join(' ') : `<span style="color:var(--ok)">✓ ${g.pass}/${g.total}</span>`}</span></div>`;
+function peak(spans) { let m = 0; spans.forEach(([s]) => { m = Math.max(m, spans.filter(([a, b]) => a <= s && s < b).length); }); return m; }
+// validated palette (dataviz validator, dark surface #232428): Before/After, and the plan mix
+const C0 = '#e04438', C1 = '#3f8ee6', MIX = { PUSH: '#9b6be0', GATE_HOLD: '#a98a00', REASSIGN_GATE: '#d94f8a' };
+const MIXLAB = { PUSH: 'Push now', GATE_HOLD: 'Wait at gate', REASSIGN_GATE: 'Move to stand' };
+function tipAt(e, html) { const t = $('dtip'), r = $('fc').getBoundingClientRect(); t.innerHTML = html; t.hidden = false;
+  t.style.left = Math.min(e.clientX - r.left + 14, r.width - 230) + 'px'; t.style.top = (e.clientY - r.top + 14) + 'px'; }
+const tipOff = () => { $('dtip').hidden = true; };
+function lineChart(F) {
+  const W = CW.line, H = 170, P = { l: 34, r: 56, t: 14, b: 26 }, t0 = Math.floor(D.t0), t1 = Math.ceil(D.t1);
+  const xs = t => P.l + (t - t0) / (t1 - t0) * (W - P.l - P.r), S = [[], []];
+  for (let t = t0; t <= t1; t++) { S[0].push([t, F.filter(f => f.ready <= t && t < f.today_wo).length]); S[1].push([t, F.filter(f => f.plan_push <= t && t < f.plan_wo).length]); }
+  const max = Math.max(4, ...S.flat().map(q => q[1])), ys = v => H - P.b - v / max * (H - P.t - P.b);
+  let g = '';
+  [0, Math.round(max / 2), max].forEach(v => { g += `<line x1="${P.l}" x2="${W - P.r}" y1="${ys(v)}" y2="${ys(v)}" class="grid"/><text x="${P.l - 6}" y="${ys(v) + 4}" class="ax" text-anchor="end">${v}</text>`; });
+  for (let t = Math.ceil(t0 / 15) * 15; t <= t1; t += 15) g += `<text x="${xs(t)}" y="${H - 8}" class="ax" text-anchor="middle">${fmt(t)}</text>`;
+  const path = s => 'M' + s.map(([t, v]) => `${xs(t).toFixed(1)} ${ys(v).toFixed(1)}`).join('L');
+  const end = s => s[s.length - 1];
+  let lab = '', y0 = ys(Math.max(...S[0].slice(-12).map(q => q[1]))), y1 = ys(Math.max(...S[1].slice(-12).map(q => q[1])));
+  if (Math.abs(y0 - y1) < 14) y1 = y0 + 14;
+  lab = `<text x="${W - P.r + 6}" y="${y0}" class="dl">Before</text><text x="${W - P.r + 6}" y="${y1}" class="dl">After</text>`;
+  return `<svg viewBox="0 0 ${W} ${H}" class="chart" id="lc" role="img" aria-label="Planes with engines running over time, before and after">${g}
+    <path d="${path(S[0])}" class="ln" stroke="${C0}"/><path d="${path(S[1])}" class="ln" stroke="${C1}"/>${lab}
+    <line id="lcx" class="cross" y1="${P.t}" y2="${H - P.b}" x1="-9" x2="-9"/><circle id="lc0" r="4" fill="${C0}" class="ring" cx="-9" cy="-9"/><circle id="lc1" r="4" fill="${C1}" class="ring" cx="-9" cy="-9"/>
+    <rect x="${P.l}" y="0" width="${W - P.l - P.r}" height="${H}" fill="transparent" id="lchit"/></svg>`;
 }
-function avgConf() { const r = D.notes.filter(n => n.status === 'ACCEPTED'); return r.length ? Math.round(100 * r.reduce((a, n) => a + n.p_type, 0) / r.length) : 0; }
+function bindLine(F) {
+  const svg = $('lc'), W = CW.line, P = { l: 34, r: 56 }, t0 = Math.floor(D.t0), t1 = Math.ceil(D.t1), H = 170;
+  const count = (t, s) => s === 0 ? F.filter(f => f.ready <= t && t < f.today_wo).length : F.filter(f => f.plan_push <= t && t < f.plan_wo).length;
+  const vmax = Math.max(4, ...Array.from({ length: t1 - t0 + 1 }, (_, i) => Math.max(count(t0 + i, 0), count(t0 + i, 1))));
+  const ys = v => H - 26 - v / vmax * (H - 14 - 26);
+  $('lchit').onmousemove = e => {
+    const r = svg.getBoundingClientRect(), x = (e.clientX - r.left) / r.width * W, t = Math.round(t0 + (x - P.l) / (W - P.l - P.r) * (t1 - t0));
+    const xx = P.l + (t - t0) / (t1 - t0) * (W - P.l - P.r), a = count(t, 0), b = count(t, 1);
+    $('lcx').setAttribute('x1', xx); $('lcx').setAttribute('x2', xx);
+    $('lc0').setAttribute('cx', xx); $('lc0').setAttribute('cy', ys(a)); $('lc1').setAttribute('cx', xx); $('lc1').setAttribute('cy', ys(b));
+    tipAt(e, `<b>${fmt(t)}</b><div><i style="background:${C0}"></i>Before <span>${a} planes</span></div><div><i style="background:${C1}"></i>After <span>${b} planes</span></div>`);
+  };
+  $('lchit').onmouseleave = () => { tipOff(); ['lc0', 'lc1'].forEach(k => $(k).setAttribute('cx', -9)); $('lcx').setAttribute('x1', -9); $('lcx').setAttribute('x2', -9); };
+}
+function dumbbell(F) {
+  const rows = F.slice().sort((a, b) => (b.today_taxi - b.plan_taxi) - (a.today_taxi - a.plan_taxi));
+  const W = CW.db, RH = 7, P = { l: 58, r: 12, t: 8 }, H = P.t + rows.length * RH + 22, max = Math.max(...rows.map(f => Math.max(f.today_taxi, f.plan_taxi)));
+  const xs = v => P.l + v / max * (W - P.l - P.r);
+  let s = '';
+  for (let v = 0; v <= max; v += 10) s += `<line x1="${xs(v)}" x2="${xs(v)}" y1="${P.t - 6}" y2="${H - 20}" class="grid"/><text x="${xs(v)}" y="${H - 6}" class="ax" text-anchor="middle">${v}</text>`;
+  rows.forEach((f, i) => { const y = P.t + i * RH + RH / 2;
+    s += `<g class="db" data-i="${F.indexOf(f)}"><rect x="0" y="${y - RH / 2}" width="${W}" height="${RH}" fill="transparent"/>
+      ${i % 2 ? '' : `<text x="${P.l - 6}" y="${y + 3}" class="ax id" text-anchor="end">${esc(f.id)}</text>`}
+      <line x1="${xs(f.plan_taxi)}" x2="${xs(f.today_taxi)}" y1="${y}" y2="${y}" class="conn"/>
+      <circle cx="${xs(f.today_taxi)}" cy="${y}" r="3.2" fill="${C0}" class="ring"/><circle cx="${xs(f.plan_taxi)}" cy="${y}" r="3.2" fill="${C1}" class="ring"/></g>`; });
+  return `<svg viewBox="0 0 ${W} ${H}" class="chart" id="dbc" role="img" aria-label="Engines-on taxi minutes per flight, before and after">
+    ${s}</svg>`;
+}
+function bindDumbbell(F) {
+  $('dbc').querySelectorAll('.db').forEach(g => { const f = F[+g.dataset.i];
+    g.onmousemove = e => tipAt(e, `<b>${esc(f.id)}</b><div><i style="background:${C0}"></i>Before <span>${f.today_taxi} min</span></div><div><i style="background:${C1}"></i>After <span>${f.plan_taxi} min</span></div><div class="mut">${MIXLAB[f.action]}</div>`);
+    g.onmouseleave = tipOff; g.onclick = () => select(f.id); });
+}
+function stack(parts, total) {
+  return `<div class="stack">${parts.filter(q => q[1]).map(([lab, v, c]) => `<span style="flex:${v};background:${c}" title="${lab}: ${v}"></span>`).join('')}</div>
+    <div class="stackkey">${parts.map(([lab, v, c]) => `<span><i style="background:${c}"></i>${lab} <b>${v}</b></span>`).join('')}</div>`;
+}
+const CW = { line: 640, db: 640 };
+function overview() {
+  const w = ($('fc').clientWidth || 1100) - 64; CW.line = CW.db = Math.round(w * 1.25 / 3.3 - 28);
+  const F = D.flights, n = a => F.filter(f => f.action === a).length, k = x => Math.round(x).toLocaleString();
+  const taxi0 = F.reduce((s, f) => s + f.today_taxi, 0), taxi1 = F.reduce((s, f) => s + f.plan_taxi, 0);
+  const fuel0 = F.reduce((s, f) => s + f.today_taxi * f.burn, 0), fuel1 = F.reduce((s, f) => s + f.plan_taxi * f.burn, 0);
+  const pk0 = peak(F.map(f => [f.ready, f.today_wo])), pk1 = peak(F.map(f => [f.plan_push, f.plan_wo]));
+  const dt = F.reduce((s, f) => s + (f.plan_wo - f.today_wo), 0) / F.length;
+  const rules = D.notes.filter(x => x.status === 'ACCEPTED' && x.type !== 'NONE').length, held = D.notes.filter(x => x.status !== 'ACCEPTED').length;
+  const kpi = (lab, val, sub, cls = '') => `<div class="kpi ${cls}"><small>${lab}</small><b>${val}</b><span>${sub}</span></div>`;
+  $('fc').innerHTML = `<div class="ovhead"><b>Situation overview</b><span class="lab">${esc(D.airport_name)}, storm hour, ${F.length} departures, before = recorded 2015, after = SkyQueue plan</span>
+    <span class="i left" tabindex="0" data-tip="Totals for the whole storm hour. Before is what really happened in 2015; after is SkyQueue’s plan through the same timing model. Fuel uses made-up burn rates, so fuel and CO₂ are estimates.">i</span></div>
+  <div class="kpis">
+    ${kpi('Taxi fuel saved', `${k(fuel0 - fuel1)} kg`, `${k((fuel0 - fuel1) * 3.16)} kg CO₂, estimate`, 'good')}
+    ${kpi('Engine time cut', `${taxi0 ? Math.round(100 * (taxi0 - taxi1) / taxi0) : 0}%`, `${k(taxi0)} → ${k(taxi1)} engine-on minutes`, 'good')}
+    ${kpi('Peak on the taxiway', `${pk0} → ${pk1}`, 'most planes taxiing at once', pk1 <= pk0 ? 'good' : '')}
+    ${kpi('Safety checks', `${D.checks_pass}/${D.checks_total}`, D.can_approve ? '✓ every hard rule passes' : '✕ a hard rule fails', D.can_approve ? 'good' : 'bad')}
+  </div>
+  <div class="drow">
+    <div class="card2"><h5>Planes with engines running</h5><div class="leg"><span><i style="background:${C0}"></i>Before</span><span><i style="background:${C1}"></i>After</span></div>${lineChart(F)}</div>
+    <div class="card2"><h5>Taxi minutes per flight <span class="i" tabindex="0" data-tip="Engine-on taxi minutes for each flight, sorted by minutes saved. Hover a row for numbers, click it to pick the flight.">i</span></h5>
+      <div class="leg"><span><i style="background:${C0}"></i>Before</span><span><i style="background:${C1}"></i>After</span></div>${dumbbell(F)}</div>
+    <div class="card2 side">
+      <h5>The plan</h5>${stack([['Push now', n('PUSH'), MIX.PUSH], ['Wait at gate', n('GATE_HOLD'), MIX.GATE_HOLD], ['Move to stand', n('REASSIGN_GATE'), MIX.REASSIGN_GATE]])}
+      <h5>Ops messages</h5>${stack([['Became rules', rules, '#3f8ee6'], ['Held back', held, '#e04438']])}
+      <div class="minis"><div><small>Agreed</small><b>${D.outcome.source === 'AGREED' ? 'Round ' + D.outcome.round : 'Backup'}</b></div>
+        <div><small>Take-off vs 2015</small><b class="${dt <= 0 ? 'g' : 'w'}">${dt <= 0 ? '−' : '+'}${Math.abs(dt).toFixed(1)} min</b></div></div>
+    </div>
+  </div>
+  <div class="tapinfo" id="tapinfo">Tap any plane on the aprons, or a row above, to see its line in the plan.</div><div class="dtip" id="dtip" hidden></div>`;
+  bindLine(F); bindDumbbell(F);
+}
+function select(id) {
+  sel = id; const g = D.flights.find(f => f.id === id), box = $('tapinfo'); if (!g || !box) return;
+  const act = { PUSH: 'pushes back when ready', GATE_HOLD: `waits at gate ${g.gate} until ${g.until}`, REASSIGN_GATE: `moves to stand ${g.stand}, waits until ${g.until}` }[g.action];
+  box.innerHTML = `<b class="mono">${esc(g.id)}</b> ${act}, taxi ${g.today_taxi} → ${g.plan_taxi} min, ${g.fails.length ? `<span style="color:var(--bad)">fails ${g.fails.join(', ')}</span>` : `${g.pass}/${g.total} checks pass`}`;
+}
+function whatYou() {
+  const n = a => D.flights.filter(f => f.action === a).length, first = D.flights.slice().sort((a, b) => a.plan_wo - b.plan_wo)[0];
+  return `<b>You are approving SkyQueue’s departure plan for ${esc(D.airport_name)}, ${D.flights.length} flights in this storm hour.</b>
+    <ul><li><span class="mono">${n('PUSH')}</span> push back as soon as they are ready</li>
+    <li><span class="mono">${n('GATE_HOLD')}</span> wait at their gate with engines off until their runway slot</li>
+    <li><span class="mono">${n('REASSIGN_GATE')}</span> move to a remote stand and wait there</li>
+    <li>Take-off order and times as shown on the After apron, first off: <span class="mono">${esc(first.id)}</span></li></ul>
+    <p>${D.outcome.source === 'AGREED' ? 'Tower, Pilot and Ground all agreed to it' : 'The agents did not agree, so code built this backup plan'}, and it passed every safety rule. Approving releases it to the ramp and tower and records your decision with the time in the audit log. Reject sends it back.</p>`;
+}
 function setDecision() {
   const live = phase === 'fly';
+  $('whatyou').innerHTML = whatYou();
   $('approve').disabled = !(D.can_approve && live && !D.decided); $('reject').disabled = !(live && !D.decided);
   $('dmsg').innerHTML = D.decided ? `<b>${esc(D.decided)}</b>` : !live ? 'Press Play to see the plan.'
-    : D.can_approve ? `${D.checks_pass} of ${D.checks_total} safety checks pass · notes read at ${avgConf()}% average confidence (rules need 60%). Nothing moves until you approve.` : `You can't approve this plan: ${esc(D.fails.join(', '))}.`;
+    : D.can_approve ? `${D.checks_pass} of ${D.checks_total} safety checks pass, notes read at ${avgConf()}% average confidence (rules need 60%). Nothing moves until you approve.` : `You can't approve this plan: ${esc(D.fails.join(', '))}.`;
 }
 function decide(what) {
   const b = [...window.parent.document.querySelectorAll('button')].find(x => x.innerText.trim() === `${what}::${ALL.airport}::${key}`);
@@ -410,33 +530,42 @@ function decide(what) {
 }
 $('approve').onclick = () => decide('APPROVE'); $('reject').onclick = () => decide('REJECT');
 
-// ---------- how it works ----------
+// ---------- how it works: a vertical taxiway, one stop per step ----------
 const STOPS = [
-  { x: 120, t: 'Flight data', p: 'Real delays from the 2015 US DOT file.', tags: [['Data'], ['DOT 2015']], up: true, tip: 'Trigger rows have a weather delay over 15 min or a late-aircraft delay over 20 min. The queue is every departure within an hour of it.' },
-  { x: 290, t: 'Ops notes', p: 'Messages from ramp, crew and dispatch.', tags: [['Data'], ['made-up']], tip: 'Generated from templates with a fixed seed and labelled made-up, or written by you in a live run. Each has a hidden answer for scoring.' },
-  { x: 460, t: 'Note reader', p: 'Turns each note into a typed answer.', tags: [['AI', 'ai'], ['Claude']], up: true, mini: ['ch-R'], tip: 'One Claude call per scenario, separate from the agents. It answers typed questions with a confidence for each.' },
-  { x: 630, t: 'Rule checker', p: 'Only notes that pass become rules.', tags: [['Code', 'code'], ['Python']], tip: 'Four checks: known type, target exists, confidence at least 0.6, no request to break a rule.' },
-  { x: 790, t: 'Agents', p: 'Tower, Pilot and Ground negotiate.', tags: [['AI', 'ai'], ['Claude ×3']], up: true, mini: ['ch-T', 'ch-P', 'ch-G'], tip: 'Three separate Claude calls, each with its own prompt and data. Up to 3 rounds. Code assigns every message and plan-line ID.' },
-  { x: 920, t: 'Safety rules', p: '8 hard rules plus every accepted note.', tags: [['Code', 'code'], ['pytest']], mini: ['i-shield'], tip: 'Every proposal is checked before the other agents see it. A failing plan goes back to its sender with the rule ID.' },
-  { x: 1100, t: 'You', p: 'Nothing moves until you approve.', tags: [['Human', 'you']], up: true, tip: 'You see the plan, the rule results and where every line came from. Approve is disabled if any hard rule fails.' },
-  { x: 1270, t: 'Audit log', p: 'Every line traces back.', tags: [['Code', 'code'], ['SQLite']], tip: 'Messages, readings, rule checks, plans and your decision, with times and trace links. Exports as JSON.', left: true },
+  ['Flight data', 'Real delays from the 2015 US DOT file.', [['Data'], ['DOT 2015']], 'Trigger rows have a weather delay over 15 min or a late-aircraft delay over 20 min. The queue is every departure within an hour of it.'],
+  ['Ops inbox', 'Messages from ramp, crew and dispatch.', [['Data'], ['made-up']], 'Generated from templates with a fixed seed and labelled made-up, or written by you for a live run.'],
+  ['Note reader', 'Turns each message into a typed answer.', [['AI', 'ai'], ['Claude']], 'One Claude call per scenario, separate from the agents. It answers typed questions with a confidence for each.'],
+  ['Rule checker', 'Only messages that pass become rules.', [['Code', 'code'], ['Python']], 'Four checks: known type, target exists, confidence at least 60%, no request to break a rule.'],
+  ['Three agents', 'Tower, Pilot and Ground negotiate.', [['AI', 'ai'], ['Claude ×3']], 'Three separate Claude calls, each with its own prompt and data. Up to 3 rounds. Code assigns every ID.'],
+  ['Safety rules', '8 hard rules plus every accepted message.', [['Code', 'code'], ['pytest']], 'Every proposal is checked before the other agents see it. A failing plan goes back with the rule ID. No deal by round 3 means a backup plan.'],
+  ['You', 'Nothing moves until you approve.', [['Human', 'you']], 'You see the plan, the rule results and where every line came from. Approve is disabled if any hard rule fails.'],
+  ['Audit log', 'Every line traces back.', [['Code', 'code'], ['SQLite']], 'Messages, readings, rule checks, plans and your decision, with times and trace links. Exports as JSON.'],
 ];
-const route = $('route'), stage = $('stage'), L = route.getTotalLength();
-STOPS.forEach((s, i) => {
-  s.d = s.x - 60;
-  const g = document.createElementNS(NS, 'g'); g.setAttribute('class', 'stop');
-  g.innerHTML = `<circle cx="${s.x}" cy="260" r="22"/><text x="${s.x}" y="260">${i + 1}</text>`; $('stops').appendChild(g); s.dot = g;
-  const c = document.createElement('div'); c.className = 'card';
-  c.innerHTML = (s.mini ? `<div class="mini">${s.mini.map(use).join('')}</div>` : '') + `<h4>${s.t} <span class="i${s.left ? ' left' : ''}${s.up ? ' down' : ''}" tabindex="0" data-tip="${esc(s.tip)}">i</span></h4><p>${s.p}</p><div class="tags">${s.tags.map(([w, k]) => `<span class="tag${k ? ' k-' + k : ''}">${w}</span>`).join('')}</div>`;
-  c.style.left = `${s.x / 14}%`; if (s.up) c.style.bottom = `${(600 - 225) / 6}%`; else c.style.top = `${335 / 6}%`;
-  stage.appendChild(c); s.card = c;
-});
-const plane = $('plane'); let hd = 0, hpaused = false, dwell = .6, idx = 0, hlast = performance.now();
+$('vcards').innerHTML = STOPS.map(([t, d, tags, tip], i) => `<div class="vcard" id="vc${i}"><span class="num">${i + 1}</span>
+  <div class="vrow"><h4>${t} <span class="i right" tabindex="0" data-tip="${esc(tip)}">i</span></h4><div class="tags">${tags.map(([w, k]) => `<span class="tag${k ? ' k-' + k : ''}">${w}</span>`).join('')}</div></div>
+  <p>${d}</p></div>`).join('');
+const route = $('route'), plane = $('plane');
+let stops = [], L = 0;
+function layoutRoute() {
+  const top = $('vc0').offsetTop, cards = STOPS.map((_, i) => $('vc' + i));
+  stops = cards.map(c => c.offsetTop + c.offsetHeight / 2);
+  const d = `M30 ${top} V ${cards[cards.length - 1].offsetTop + cards[cards.length - 1].offsetHeight}`;
+  route.setAttribute('d', d); $('routeEdge').setAttribute('d', d); L = route.getTotalLength();
+}
+new ResizeObserver(layoutRoute).observe($('vcards')); layoutRoute();
+let hd = 0, hpaused = false, dwell = .6, idx = 0, hlast = performance.now();
 function htick(now) {
   const dt = Math.min(.2, (now - hlast) / 1000); hlast = now;
-  if (!hpaused) { if (dwell > 0) dwell -= dt; else { hd += 220 * dt; if (idx < STOPS.length && hd >= STOPS[idx].d) { hd = STOPS[idx].d; dwell = 1.6; idx++; } if (hd >= L) { hd = 0; idx = 0; dwell = 1; } } }
-  const p = route.getPointAtLength(hd); plane.setAttribute('transform', `translate(${p.x} ${p.y}) rotate(90)`);
-  STOPS.forEach((s, i) => { s.card.classList.toggle('on', i === idx - 1 && dwell > 0); s.dot.classList.toggle('on', i < idx); });
+  if (L && !hpaused) {
+    if (dwell > 0) dwell -= dt;
+    else {
+      hd += 160 * dt; const y0 = route.getPointAtLength(0).y;
+      if (idx < stops.length && y0 + hd >= stops[idx]) { hd = stops[idx] - y0; dwell = 1.5; idx++; }
+      if (hd >= L) { hd = 0; idx = 0; dwell = 1; }
+    }
+    const p = route.getPointAtLength(Math.min(hd, L)); plane.setAttribute('transform', `translate(${p.x} ${p.y}) rotate(180)`);
+    STOPS.forEach((_, i) => { const c = $('vc' + i); c.classList.toggle('on', i === idx - 1 && dwell > 0); c.classList.toggle('done', i < idx); });
+  }
   requestAnimationFrame(htick);
 }
 requestAnimationFrame(htick);

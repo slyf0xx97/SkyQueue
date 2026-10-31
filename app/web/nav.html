@@ -15,13 +15,37 @@ button.ctl.go { background: var(--line); color: #121315; border-color: var(--lin
 button.ctl.go:hover { filter: brightness(1.08); color: #121315; }
 </style></head><body>
 <span class="brand">Sky<span>Queue</span></span>
-<span class="ctl here" id="here"></span>
 <button class="ctl" id="how">How it works</button>
 <button class="ctl go" id="play">▶ Play sample</button>
 <script>
 const N = /*DATA*/;
-if (N) document.getElementById('here').innerHTML = `📍 <b>${N.code}</b> ${N.city}`;
 const story = () => [...parent.document.querySelectorAll('iframe')].map(f => f.contentWindow).find(w => w && w.SQ);
 document.getElementById('play').onclick = () => { const s = story(); if (s) s.SQ.play(); };
 document.getElementById('how').onclick = () => { const s = story(); if (s) s.SQ.how(); };
+// hooks live on the host page; P keeps working even if this frame is rebuilt
+const P = parent;
+// the layout is drawn for 1280px; smaller laptop windows (high display scaling) get the content scaled to fit via --z
+const fitZoom = () => { const z = Math.min(1, parent.innerWidth / 1280).toFixed(3), r = parent.document.documentElement; r.style.zoom = ''; r.style.setProperty('--z', z); };
+parent.__sqFit = fitZoom; fitZoom(); if (!parent.__sqZoomHook) { parent.__sqZoomHook = true; P.addEventListener('resize', () => P.__sqFit && P.__sqFit()); }
+// show the loading screen the moment an airport is clicked; the story frame removes it when the new data lands
+if (!parent.__sqLoadHook) { parent.__sqLoadHook = true;
+  P.document.addEventListener('click', e => {
+    const b = e.target.closest('.st-key-airport_pills button'); if (!b || b.getAttribute('aria-checked') === 'true' || b.matches('[kind$="Active"]')) return;
+    const [code, ...city] = b.textContent.trim().split(/\s+/), d = P.document;
+    d.getElementById('sqload-js')?.remove();
+    const o = d.createElement('div'); o.id = 'sqload-js'; o.className = 'sqload';
+    o.innerHTML = `<div class="sql-box"><div class="sql-brand">Sky<span>Queue</span></div><div class="sql-to"><small>Taxiing to</small><b>${code}</b><em>${city.join(' ')}</em></div>
+      <div class="sql-rwy"><span class="sql-plane">✈</span></div><p>Loading three real storm days from the 2015 data, the ops inbox and the agents' plans…</p></div>`;
+    d.body.appendChild(o); P.setTimeout(() => o.remove(), 25000);
+  }, true);
+}
+// a pasted key that looks complete applies straight away, no Enter needed
+if (!P.__sqKeyHook) { P.__sqKeyHook = true;
+  P.document.addEventListener('input', e => {
+    const i = e.target; if (!i.closest || !i.closest('.st-key-nav [data-testid="stTextInput"]')) return;
+    P.clearTimeout(P.__sqKeyT);
+    if (/^sk-[\w-]{30,}$/.test(i.value.trim())) P.__sqKeyT = P.setTimeout(() =>
+      i.dispatchEvent(new P.KeyboardEvent('keydown', { key: 'Enter', code: 'Enter', keyCode: 13, which: 13, bubbles: true })), 200);
+  }, true);
+}
 </script></body></html>

@@ -4,8 +4,8 @@
 <section class="stagehero">
   <div class="sh-text">
     <h1 class="reveal" style="animation-delay:.15s">Sky<br><span>Queue</span></h1>
-    <div class="tagx2 reveal" style="animation-delay:.25s">Engines off, queue on time.</div>
-    <p class="sub2 reveal" style="animation-delay:.4s">When a storm backs up the runway, three AI agents negotiate on their own who pushes back, who waits at the gate and who moves. Code checks every plan. You approve.</p>
+    <div class="tagx2 reveal" style="animation-delay:.25s">Orchestrate Taxiing</div>
+    <ul class="benefits reveal" style="animation-delay:.4s"><li><i>✓</i>Save Fuel &amp; Time</li><li><i>✓</i>Cut Tedious Ground Efforts</li><li><i>✓</i>Fly on Time</li></ul>
     <div class="auto reveal" style="animation-delay:.5s"><i class="dot"></i><b>Autonomous</b><span>Multi-agent AI<br>Coordinates tower, airline and ramp in a storm</span></div>
     <div class="play reveal" style="animation-delay:.55s"><button id="playBtn"><span>▶ Play sample</span><small id="playSub"></small></button><button class="caret" id="caret" aria-label="Choose a sample">▾</button><div class="menu" id="menu"></div></div>
   </div>
@@ -15,26 +15,25 @@
       <path class="edge2" d="M0 330 L620 330"/><path class="edge2" d="M0 500 L620 500"/>
       <rect class="rwy2" x="0" y="520" width="620" height="60"/><path class="rwyc2" d="M10 550 L610 550"/>
       <text class="stno2" x="560" y="512" text-anchor="end">RWY 28R</text>
-      <path class="taxi2" d="M150 240 C150 400 190 440 330 440 L560 440 C590 440 600 460 600 480"/>
+      <path class="taxi2" d="M150 240 C150 400 190 440 330 440 L540 440 C566 440 574 462 574 490 L574 520"/>
       <path class="taxi2" d="M330 240 C330 380 360 440 430 440"/>
       <path class="taxi2" d="M510 240 L510 330"/>
-      <g class="holdshort"><path d="M584 455 L616 455"/><path d="M584 463 L616 463"/><path class="dsh" d="M584 471 L616 471"/><path class="dsh" d="M584 479 L616 479"/></g>
       <rect class="stand2" x="90" y="80" width="120" height="160"/><rect class="stand2" x="270" y="80" width="120" height="160"/><rect class="stand2 bad" x="450" y="80" width="120" height="160"/>
-      <text class="stno2" x="150" y="66" text-anchor="middle">B10</text><text class="stno2" x="330" y="66" text-anchor="middle">B11</text><text class="stno2 bad" x="510" y="66" text-anchor="middle">B12 · NO GPU</text>
+      <text class="stno2" x="150" y="66" text-anchor="middle">B10</text><text class="stno2" x="330" y="66" text-anchor="middle">B11</text><text class="stno2 bad" x="510" y="66" text-anchor="middle">B12, NO GPU</text>
       <g transform="translate(510 170) rotate(180)"><path class="ac2" style="fill:var(--vis)" d="M0 -40 C5 -40 7 -33 7 -24 L7 -7 L40 9 L40 16 L7 9 L7 26 L17 35 L17 40 L0 37 L-17 40 L-17 35 L-7 26 L-7 9 L-40 16 L-40 9 L-7 -7 L-7 -24 C-7 -33 -5 -40 0 -40Z"/></g>
       <svg x="18" y="232" width="96" height="96" viewBox="0 0 16 16"><use href="#ch-P"/></svg>
       <svg x="462" y="250" width="96" height="96" viewBox="0 0 16 16"><use href="#ch-G"/></svg>
       <svg x="0" y="380" width="140" height="140" viewBox="0 0 16 16"><use href="#ch-T"/></svg>
     </svg>
-    <div class="legend2 onapron" style="animation-delay:.7s"><span><i style="background:var(--line)"></i>Agreed route</span><span><i style="background:var(--vis)"></i>Hold · constraint</span></div>
+    <div class="legend2 onapron" style="animation-delay:.7s"><span><i style="background:var(--line)"></i>Agreed route</span><span><i style="background:var(--vis)"></i>Hold, constraint</span></div>
     <svg class="planes" viewBox="0 0 620 600">
       <g class="fly f1"><ellipse class="jet" cx="0" cy="44" rx="10" ry="18"/><path class="ac2" d="M0 -40 C5 -40 7 -33 7 -24 L7 -7 L40 9 L40 16 L7 9 L7 26 L17 35 L17 40 L0 37 L-17 40 L-17 35 L-7 26 L-7 9 L-40 16 L-40 9 L-7 -7 L-7 -24 C-7 -33 -5 -40 0 -40Z"/></g>
       <g class="fly f2"><ellipse class="jet" cx="0" cy="44" rx="10" ry="18"/><path class="ac2" d="M0 -40 C5 -40 7 -33 7 -24 L7 -7 L40 9 L40 16 L7 9 L7 26 L17 35 L17 40 L0 37 L-17 40 L-17 35 L-7 26 L-7 9 L-40 16 L-40 9 L-7 -7 L-7 -24 C-7 -33 -5 -40 0 -40Z"/></g>
     </svg>
-    <div class="alab" style="left:11%;top:55%"><b>Agent</b> Pilot <span class="i" tabindex="0" data-tip="PILOT · airline dispatch&#10;• Knows each flight’s spare fuel, crew duty end and connecting passengers&#10;• Reads crew and dispatch messages, e.g. ‘captain has 25 min left’&#10;• Accepts, asks for a change, or rejects Tower’s plan&#10;Why an agent: airline priorities arrive as free text and change by the minute. A fixed rule can’t weigh them.">i</span></div>
-    <div class="alab" style="left:11%;top:88%"><b>Agent</b> Tower <span class="i" tabindex="0" data-tip="TOWER · air traffic control&#10;• Owns runway order, wake spacing and the storm departure rate&#10;• Proposes the full plan each round, starting from a metering plan&#10;• Merges Pilot’s and Ground’s change requests into the next offer&#10;Why an agent: it trades one airline’s need against another’s, round by round, the way a controller does on the phone.">i</span></div>
-    <div class="alab" style="left:72%;top:59%"><b>Agent</b> Ground <span class="i left" tabindex="0" data-tip="GROUND · the ramp&#10;• Knows gates, ground power, arriving planes and ramp crew shifts&#10;• Moves planes to remote stands so they wait with engines off&#10;• Flags gates with no power or needed for an arrival&#10;Why an agent: ramp problems need a counter-offer, not a yes or no, and they arrive as messages, not data.">i</span></div>
-    <div class="alab code" style="left:84%;top:69%"><b>Code</b> 11 safety rules <span class="i" tabindex="0" data-tip="SAFETY RULES · plain code, not AI&#10;• Checks every plan before any agent sees it&#10;• 8 hard rules: wake spacing, departure rate, taxiway capacity, fuel, crew duty, gate free for its inbound, ground power for holds, ramp crew on shift&#10;• Accepted ops notes become extra rules; no note can remove one&#10;• A failing plan goes back to Tower with the rule ID&#10;Then you approve.">i</span></div>
+    <div class="alab" style="left:11%;top:55%"><b>Agent</b> Pilot <span class="i" tabindex="0" data-tip="PILOT: airline dispatch&#10;• Knows each flight’s spare fuel, crew duty end and connecting passengers&#10;• Reads crew and dispatch messages, e.g. ‘captain has 25 min left’&#10;• Accepts, asks for a change, or rejects Tower’s plan&#10;Why an agent: airline priorities arrive as free text and change by the minute. A fixed rule can’t weigh them.">i</span></div>
+    <div class="alab" style="left:11%;top:88%"><b>Agent</b> Tower <span class="i" tabindex="0" data-tip="TOWER: air traffic control&#10;• Owns runway order, wake spacing and the storm departure rate&#10;• Proposes the full plan each round, starting from a metering plan&#10;• Merges Pilot’s and Ground’s change requests into the next offer&#10;Why an agent: it trades one airline’s need against another’s, round by round, the way a controller does on the phone.">i</span></div>
+    <div class="alab" style="left:72%;top:59%"><b>Agent</b> Ground <span class="i left" tabindex="0" data-tip="GROUND: the ramp&#10;• Knows gates, ground power, arriving planes and ramp crew shifts&#10;• Moves planes to remote stands so they wait with engines off&#10;• Flags gates with no power or needed for an arrival&#10;Why an agent: ramp problems need a counter-offer, not a yes or no, and they arrive as messages, not data.">i</span></div>
+    <div class="alab code" style="left:84%;top:69%"><b>Code</b> Safety rules <span class="i" tabindex="0" data-tip="SAFETY RULES: plain code, not AI&#10;• Checks every plan before any agent sees it&#10;• 8 hard rules: wake spacing, departure rate, taxiway capacity, fuel, crew duty, gate free for its inbound, ground power for holds, ramp crew on shift&#10;• Accepted ops notes become extra rules; no note can remove one&#10;• A failing plan goes back to Tower with the rule ID&#10;Then you approve.">i</span></div>
   </div>
 </section>
 
@@ -52,6 +51,7 @@ $('menu').onclick = e => { const b = e.target.closest('button'); if (!b) return;
 document.addEventListener('click', () => $('menu').classList.remove('open'));
 function play() { const s = story(); if (s) s.SQ.play(key); }
 $('playBtn').onclick = play;
-function fit() { if (window.frameElement) window.frameElement.style.height = (document.documentElement.scrollHeight + 4) + 'px'; }
+// size to the hero panel itself; the flying planes overflow it and must not stretch the frame
+function fit() { if (window.frameElement) window.frameElement.style.height = Math.ceil(document.querySelector('.stagehero').getBoundingClientRect().bottom + 6) + 'px'; }
 new ResizeObserver(fit).observe(document.body); render(); fit();
 </script></body></html>
