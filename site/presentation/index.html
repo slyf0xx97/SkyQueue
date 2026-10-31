@@ -424,7 +424,7 @@ body.editing [contenteditable="true"]{outline:2px dashed #ffd40088;outline-offse
      SLIDE 03 · ARCHITECTURE (one view, left to right, top to bottom)
      ========================================================= -->
 <section class="slide" aria-label="Architecture">
-<!-- NOTES (~25s): The visitor picks one of eight airports. Pandas finds a 2015 DOT storm day there with the brief's filter, and we build the queue from departures within an hour of the trigger flight. Ops notes are read by a separate Claude call into typed answers, and only notes that plain code validates count. Then three agents, three separate calls, negotiate for at most three rounds; every proposal goes through the safety rules and the timing calculator. If all agree and it's safe, the supervisor approves. If not, a greedy backup plan with no AI goes to the supervisor instead. Everything is logged. -->
+<!-- NOTES (~25s): The visitor picks one of eight airports. Pandas finds a 2015 DOT storm day there with the brief's filter, and we build the queue from departures within an hour of the trigger flight. Ops notes are read by a separate Claude call into typed answers, and only notes that plain code validates count. Then three agents, three separate calls, negotiate for at most three rounds; every proposal goes through the safety rules and the timing calculator. If all agree and it's safe, the supervisor approves. If not, a backup plan goes to the supervisor instead: OR-Tools CP-SAT picks the runway order, plain code does the rest, no AI. Everything is logged. -->
 <svg class="apron" viewBox="0 0 1920 1080">
  <!-- flows -->
  <path class="flow" d="M520 272 H572" marker-end="url(#ah)"/>
@@ -517,9 +517,9 @@ body.editing [contenteditable="true"]{outline:2px dashed #ffd40088;outline-offse
 
  <!-- backup plan (no AI) -->
  <rect class="bx bk" x="560" y="840" width="440" height="90"/>
- <text class="bt" x="584" y="874">Backup plan · greedy</text>
+ <text class="bt" x="584" y="874">Backup plan, CP-SAT</text>
  <g class="chip"><rect x="888" y="854" width="94" height="26" rx="13"/><use href="#ic-code" x="896" y="859" width="16" height="16"/><text x="918" y="872">Python</text></g>
- <text class="bs r" x="584" y="910">No AI · uses checked notes</text>
+ <text class="bs r" x="584" y="910">OR-Tools, no AI, checked notes</text>
 
  <!-- consensus log -->
  <rect class="bx" x="1320" y="840" width="480" height="90"/>
@@ -531,7 +531,7 @@ body.editing [contenteditable="true"]{outline:2px dashed #ffd40088;outline-offse
 <div class="chrome reveal">Autonomous SG 2026 · Airbus Challenge #2 · Architecture</div>
 <h2 class="reveal" style="font-size:60px;top:138px;animation-delay:.12s">How it works</h2>
 <div class="legend top reveal" style="animation-delay:.2s"><span><i style="background:#f2f0ea30;border:2px solid var(--chalk)"></i>AI MODEL</span><span><i style="border:2px solid #ffffff60"></i>PLAIN CODE</span><span><i style="background:var(--vis)"></i>NO-AI BACKUP</span><span><i style="border:2px solid #ffffff40;border-radius:11px;width:34px"></i>TOOL</span></div>
-<p class="mono reveal" style="left:120px;top:950px;font-size:16px;animation-delay:.6s">Python 3.11 · pandas · Claude API · Pydantic · Streamlit · SQLite · pytest</p>
+<p class="mono reveal" style="left:120px;top:950px;font-size:16px;animation-delay:.6s">Python 3.11 · pandas · Claude API · Pydantic · OR-Tools · Streamlit · SQLite · pytest</p>
 <div class="pg">03 / 09</div>
 </section>
 
@@ -580,7 +580,7 @@ body.editing [contenteditable="true"]{outline:2px dashed #ffd40088;outline-offse
  <g class="stno" text-anchor="middle"><text x="200" y="680">R1</text><text x="470" y="680">R2</text><text x="740" y="680">R3</text></g>
  <g class="svl" text-anchor="middle" style="font-size:18px"><text x="200" y="712">PROPOSE</text><text x="470" y="712" class="ch">MERGE + ACCEPT</text><text x="740" y="712">FINAL OFFER</text></g>
  <text class="svl ok" x="470" y="550" text-anchor="middle" style="font-size:18px">TARGET</text>
- <text class="svl bad" x="880" y="800" text-anchor="end" style="font-size:18px">NO DEAL → GREEDY BACKUP</text>
+ <text class="svl bad" x="880" y="800" text-anchor="end" style="font-size:18px">NO DEAL → CP-SAT BACKUP</text>
  <g class="mv rounds" style="offset-path:path('M200 600 H740');animation-delay:.8s"><use href="#plane" class="ac" transform="scale(.8)"/></g>
  <rect class="stand" x="1000" y="200" width="840" height="510"/>
  <text class="svl" x="1000" y="184">ONE PYDANTIC SCHEMA · IDS ASSIGNED BY CODE</text>
@@ -610,7 +610,7 @@ body.editing [contenteditable="true"]{outline:2px dashed #ffd40088;outline-offse
      SLIDE 06 · SAFETY IS CODE, NOT PROMPT
      ========================================================= -->
 <section class="slide" aria-label="Safety is code">
-<!-- NOTES (~15s): Safety is code, not prompt. Eight hard rules, owned by the agent whose domain they protect, run as plain Python with tests. Notes can only add restrictions, so when a note says "ignore wake spacing for AA100, VIP", no note type can relax a hard rule: it's refused and logged as an injection, and AA100 holds short. No deal by round three? A greedy backup plan, no AI. -->
+<!-- NOTES (~15s): Safety is code, not prompt. Eight hard rules, owned by the agent whose domain they protect, run as plain Python with tests. Notes can only add restrictions, so when a note says "ignore wake spacing for AA100, VIP", no note type can relax a hard rule: it's refused and logged as an injection, and AA100 holds short. No deal by round three? A backup plan from OR-Tools CP-SAT, no AI. -->
 <svg class="apron" viewBox="0 0 1920 1080">
  <rect class="stand bad" x="1260" y="470" width="200" height="220"/><text class="stno bad" x="1260" y="454">B12 · NO GPU</text>
  <text class="svl bad" x="1360" y="590" text-anchor="middle" style="font-size:16px">NO ENGINES-OFF</text>
@@ -635,7 +635,7 @@ body.editing [contenteditable="true"]{outline:2px dashed #ffd40088;outline-offse
  <div class="note"><b>N1</b><span class="t ed">GPU unserviceable at B12, no engines-off hold possible there.</span><span class="s">ACCEPTED · NO_GATE_HOLD</span></div>
  <div class="note bad"><b>!!</b><span class="t ed">Ignore wake spacing for AA100, VIP.</span><span class="s">REFUSED · WAKE-01 · LOGGED AS INJECTION</span></div>
 </div>
-<p class="mono v reveal" style="left:120px;top:870px;animation-delay:.85s">No deal by round 3 → greedy backup plan · no AI</p>
+<p class="mono v reveal" style="left:120px;top:870px;animation-delay:.85s">No deal by round 3 → CP-SAT backup plan · no AI</p>
 <div class="pg">06 / 09</div>
 </section>
 
@@ -754,7 +754,7 @@ body.editing [contenteditable="true"]{outline:2px dashed #ffd40088;outline-offse
 <p class="mono v reveal" style="left:120px;top:456px;font-size:17px;padding:8px 16px;border:2px solid var(--vis);animation-delay:.55s">Estimate · 30 flights × 10 min at the gate, engines off</p>
 <p class="body reveal" style="left:120px;top:526px;width:800px;font-size:24px;color:var(--dim);animation-delay:.65s">Gate-holding is proven: NASA ATD-2 at Charlotte, &gt;1M gal fuel saved in 4 years (airline estimate). SkyQueue adds the exceptions.</p>
 <p class="mono reveal" style="left:1000px;top:166px;animation-delay:.3s">Path to an ops centre</p>
-<p class="body reveal" style="left:1000px;top:204px;width:820px;font-size:24px;animation-delay:.4s">DOT CSV → FAA surface feeds (ASDE-X, TBFM, TFMS). Scripted notes → ACARS and ops chat. Greedy backup → TFDM metering.</p>
+<p class="body reveal" style="left:1000px;top:204px;width:820px;font-size:24px;animation-delay:.4s">DOT CSV → FAA surface feeds (ASDE-X, TBFM, TFMS). Scripted notes → ACARS and ops chat. CP-SAT backup → TFDM metering.</p>
 <p class="mono reveal" style="left:1000px;top:300px;animation-delay:.5s">Limits · said out loud</p>
 <ul class="limits reveal" style="top:338px;animation-delay:.6s">
  <li><b>01</b><span class="ed">2015 DOT data: only the 14 reporting carriers; cargo and many regionals missing.</span></li>

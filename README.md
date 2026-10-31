@@ -4,7 +4,7 @@
 
 Autonomous SG 2026, AI & Aerospace track, Airbus Challenge #2.
 
-When a storm backs up a departure queue, SkyQueue has three Claude agents (Tower, Pilot and Ground) negotiate pushback order, engines-off gate holds, moves to remote stands and runway order, in at most 3 rounds. A separate note reader turns free-text ops messages into typed answers, and a plain-Python validator decides which of those answers become rules. Plain-code safety rules check every proposed plan. If the agents don't agree inside 3 rounds, a greedy backup plan takes over, and a human supervisor approves whichever plan comes out.
+When a storm backs up a departure queue, SkyQueue has three Claude agents (Tower, Pilot and Ground) negotiate pushback order, engines-off gate holds, moves to remote stands and runway order, in at most 3 rounds. A separate note reader turns free-text ops messages into typed answers, and a plain-Python validator decides which of those answers become rules. Plain-code safety rules check every proposed plan. If the agents don't agree inside 3 rounds, a backup plan built by code with OR-Tools CP-SAT takes over, and a human supervisor approves whichever plan comes out.
 
 - Live site: https://skyqueue.ghernie.com
 - Pitch deck: https://skyqueue.ghernie.com/presentation
@@ -31,7 +31,7 @@ The design rule is short: **AI suggests, code decides, a person approves.**
 - Ops notes are data, never instructions. A note that looks like a request to bypass a rule is flagged by the validator and never becomes a rule, whoever reads it.
 - Nothing is applied without the supervisor. The screen only reads the log; Approve and Reject are written back to it.
 
-![SkyQueue architecture: airport pick and storm queue, ops notes through the note reader and validator, three agents negotiating up to 3 rounds against the safety rules and timing calculator, then supervisor approval or the greedy backup plan, all written to the consensus log](docs/images/architecture.png)
+![SkyQueue architecture: airport pick and storm queue, ops notes through the note reader and validator, three agents negotiating up to 3 rounds against the safety rules and timing calculator, then supervisor approval or the OR-Tools CP-SAT backup plan, all written to the consensus log](docs/images/architecture.png)
 
 This is the diagram from the How it works section of the live site. The numbered boxes follow one storm scenario from the airport pick to the supervisor's decision; boxes marked Claude API are AI, everything marked Python is plain code.
 
@@ -49,7 +49,7 @@ flowchart LR
 
 1. **Read.** The note reader turns each ops message into a typed answer. The validator keeps only the ones it can check; unclear or suspicious notes are shown to the supervisor but never become rules.
 2. **Negotiate.** Tower proposes a full plan. Code checks it against the safety rules and the timing model, then Pilot and Ground accept, counter or reject. A blocked plan goes back to Tower with the rule IDs that failed.
-3. **Fall back.** If there is no agreement after 3 rounds, the greedy backup plan builds one from the same checked notes, with no AI involved.
+3. **Fall back.** If there is no agreement after 3 rounds, the backup plan builds one from the same checked notes, with no AI involved. OR-Tools CP-SAT picks the runway order and plain code does the rest.
 4. **Approve.** The supervisor sees why each line is there and approves or rejects the plan.
 5. **Log.** Every reading, message, rule check, plan and decision is written to `runs.sqlite`.
 
@@ -68,7 +68,7 @@ flowchart LR
 | Coordinator | Code | `src/coordinator.py` | `Coordinator.run()` |
 | Timing model | Code | `src/sim/timing.py` | `simulate()`, `wake_gap()` |
 | Safety rules | Code | `src/checker/rules.py` | `check()`, `hard_failures()`, `rule_summary()` |
-| Backup plan | Code | `src/solver/backup.py` | `solve()`; `first_come_first_served()` is the B0 baseline |
+| Backup plan | Code | `src/solver/backup.py`, `src/solver/cpsat.py` | `solve()`; `runway_order()` is the CP-SAT model; `first_come_first_served()` is the B0 baseline |
 | Audit log | Code | `src/log.py` | `RunLog`, `export()` |
 | Supervisor screen | Person | `app/streamlit_app.py`, `app/web/` | `streamlit run app/streamlit_app.py` |
 
@@ -144,9 +144,13 @@ The normal taxi time is the airport's 10th percentile `TAXI_OUT` in the data. Th
 
 ### Backup plan
 
-`solve()` in `src/solver/backup.py` uses no AI. It orders the runway first come first served by ready time, then swaps any flight up that would miss its crew duty end. Each flight is then held, engines off, until it can taxi straight to its slot. A hold that the gate can't take (no ground power, a gate note, or an inbound that needs the gate) moves to a remote stand, and the stands go first to the flights with the least fuel slack. It respects the same validated notes as the agents, and its plan goes through the same `check()`. If a hard rule still fails, the plan says so in its `note`.
+`solve()` in `src/solver/backup.py` uses no AI. Its first-come-first-served order sorts the runway by ready time, then swaps any flight up that would miss its crew duty end. When the agents don't agree within 3 rounds, the coordinator calls `solve(..., optimise=True)`, which also asks Google OR-Tools CP-SAT (`runway_order()` in `src/solver/cpsat.py`) for a take-off order. CP-SAT only picks the order. It sets a wheels-off time for each flight, keeps every pair apart by the larger of the storm-rate gap and the wake gap, treats crew duty end as a hard limit, and minimises total delay, with each minute counted 5 times for flights that can't wait at the gate with engines off. The solver stops after 2 seconds. If OR-Tools is missing or finds no answer, the first-come-first-served order is used.
 
-The backup plan also seeds Tower: live Tower agents get it as `metering_plan` and are told to start from it.
+Whichever order is used, each flight is then held, engines off, until it can taxi straight to its slot. A hold that the gate can't take (no ground power, a gate note, or an inbound that needs the gate) moves to a remote stand, and the stands go first to the flights with the least fuel slack. It respects the same validated notes as the agents, and its plan goes through the same `check()`. If a hard rule still fails, the plan says so in its `note`. The CP-SAT order is kept only if its plan passes every hard rule and burns no more taxi fuel than the first-come-first-served plan; otherwise the first-come-first-served plan is returned.
+
+Across the 24 demo samples (8 airports x 3 demos), the CP-SAT order was kept in 17, with no hard-rule failures, and saved 5,586 kg of taxi fuel in total compared with first come first served. These are estimates: each flight's burn rate is synthetic, drawn in `src/sim/scenarios.py`. `tests/test_backup_cpsat.py` checks that the CP-SAT plan for one sample passes every hard rule and burns no more fuel than the first-come-first-served plan.
+
+The backup plan also seeds Tower: live Tower agents get the first-come-first-served version, without CP-SAT, as `metering_plan` and are told to start from it.
 
 ### Data model
 
@@ -328,14 +332,16 @@ A scenario starts from a trigger row: `WEATHER_DELAY > 15` or `LATE_AIRCRAFT_DEL
 | `src/checker/rules.py` | Safety rules |
 | `src/checker/validator.py` | Validator |
 | `src/checker/config.yaml` | Assumed values and thresholds |
-| `src/solver/backup.py` | Greedy backup plan and the B0 baseline |
+| `src/solver/backup.py` | Backup plan (holds, stands, CP-SAT or first-come-first-served order) and the B0 baseline |
+| `src/solver/cpsat.py` | OR-Tools CP-SAT model for the backup plan's runway order |
 | `app/streamlit_app.py` | Supervisor screen |
 | `app/web/` | HTML pages and CSS rendered inside the screen |
 | `app/assets/` | Design system: tokens, components, fonts, logo |
 | `site/presentation/` | Pitch deck |
 | `data/` | `airlines.csv`, `airports.csv`; `flights.csv` goes here but is not committed |
 | `docs/` | `prd.md`, `brief.md`, `streamlit.md` and the design system docs |
-| `tests/`, `eval/` | Empty so far |
+| `tests/test_backup_cpsat.py` | pytest check that the CP-SAT backup plan is safe and burns no more fuel than first come first served |
+| `eval/` | Empty so far |
 
 ## Known limits
 
@@ -343,11 +349,11 @@ A scenario starts from a trigger row: `WEATHER_DELAY > 15` or `LATE_AIRCRAFT_DEL
 - One Pilot agent speaks for every airline in the queue.
 - The timing model is simplified, and the values in `config.yaml` are assumptions.
 - Live agent runs have not been checked end to end with a real key yet. The recorded runs use scripted agents and a scripted reader.
-- There are no tests and no evaluation numbers yet. `tests/` and `eval/` are empty, and only the B0 baseline exists in code.
+- Testing is thin. `tests/` has one test, for the CP-SAT backup plan; `eval/` is empty, and only the B0 baseline exists in code. The CP-SAT fuel figures above are not a full evaluation.
 - The live site depends on one laptop being on.
 
 ## Credits and license
 
-Built by Ghernie for Autonomous SG 2026, Airbus Challenge #2. Flight data: 2015 US DOT on-time performance data, provided by the challenge. Weather: NOAA Aviation Weather Center. Agents and the note reader run on the Claude API from Anthropic, or through OpenRouter with a visitor's key.
+Built by Ghernie for Autonomous SG 2026, Airbus Challenge #2. Flight data: 2015 US DOT on-time performance data, provided by the challenge. Weather: NOAA Aviation Weather Center. Agents and the note reader run on the Claude API from Anthropic, or through OpenRouter with a visitor's key. The backup plan's runway order uses Google OR-Tools CP-SAT.
 
 Released under the MIT License. See [LICENSE](LICENSE).
