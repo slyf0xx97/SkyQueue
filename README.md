@@ -1,6 +1,8 @@
-# Taxi-Out Negotiator
+# HoldShort
 
 Autonomous SG 2026 · AI & Aerospace Track · Airbus Challenge #2
+
+*Engines off, queue on time.*
 
 When weather backs up a departure queue, three independent AI agents (ATC, Pilot, Ground) negotiate pushback order, engines-off gate holds and runway sequence. A deterministic safety checker vets every proposal, a rule-based solver is the fallback, and a human supervisor approves the final plan.
 
