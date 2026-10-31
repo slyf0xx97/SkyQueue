@@ -1,9 +1,9 @@
-# HoldShort — Product Requirements (PRD)
+# SkyQueue — Product Requirements (PRD)
 
 *Engines off, queue on time.*
 
 Autonomous SG 2026 · Airbus Challenge #2 · v0.3 · 31 Oct 2026
-Full background: `holdshort-brief.md` in the project knowledge base.
+Full background: `skyqueue-brief.md` in the project knowledge base.
 
 **v0.3 changes:** trace links stored by code (plan line ↔ message ↔ note ↔ rule check); linked selection, "Why this line" and note banners on the supervisor screen; code-assigned IDs; design system adopted for the app; interface references added.
 
@@ -11,7 +11,7 @@ Full background: `holdshort-brief.md` in the project knowledge base.
 
 ## 1. Summary
 
-HoldShort helps a tower supervisor clear a weather-delayed departure queue. Three AI agents (Tower, Pilot, Ground) read the situation, including free-text ops notes, and negotiate pushback order, engines-off gate holds, gate moves and runway order in at most 3 rounds. Plain code checks every plan against safety rules. If the agents don't agree, a solver makes a backup plan. A human approves every final plan, which includes revised departure and arrival times. Everything is logged, and every line of the final plan can be traced back to the messages, notes and rule checks behind it.
+SkyQueue helps a tower supervisor clear a weather-delayed departure queue. Three AI agents (Tower, Pilot, Ground) read the situation, including free-text ops notes, and negotiate pushback order, engines-off gate holds, gate moves and runway order in at most 3 rounds. Plain code checks every plan against safety rules. If the agents don't agree, a solver makes a backup plan. A human approves every final plan, which includes revised departure and arrival times. Everything is logged, and every line of the final plan can be traced back to the messages, notes and rule checks behind it.
 
 ## 2. Problem
 
@@ -19,7 +19,7 @@ During weather disruptions, aircraft push back in order and wait in long taxi qu
 
 ## 3. Prior work and our addition
 
-Departure metering (gate holds timed by an algorithm) is proven: NASA's ATD-2 trial at Charlotte reported over 1M gallons of fuel saved in its first four years, and the FAA is rolling out surface metering in TFDM. Metering decides *when* aircraft leave the gate. It does not negotiate trade-offs between organisations or read unstructured ops information. HoldShort adds that. Our solver without notes (B1) stands in for metering and is the baseline to beat.
+Departure metering (gate holds timed by an algorithm) is proven: NASA's ATD-2 trial at Charlotte reported over 1M gallons of fuel saved in its first four years, and the FAA is rolling out surface metering in TFDM. Metering decides *when* aircraft leave the gate. It does not negotiate trade-offs between organisations or read unstructured ops information. SkyQueue adds that. Our solver without notes (B1) stands in for metering and is the baseline to beat.
 
 ### Interface references
 
@@ -156,7 +156,7 @@ The ATD-2 human-factors study is small (4 to 13 survey responses per condition),
 - F9.11 **Why this line.** Each plan line has a "Why this line" action. It opens the proposing message, the agents that agreed, the notes used and the rule results for that line, in that order.
 - F9.12 **Note banners.** A validated note constraint raises a banner on every strip it affects (for example "No ground power at B12, note N1"). An ignored injection note shows "Ignored" and is logged.
 - F9.13 (Could, before the feature freeze only) Held strips show the hold-until time as a countdown.
-- F9.14 The screen uses the HoldShort design system (`tokens.css`, `components/bundle.css`, fonts) from `app/assets/`. Real, made-up and estimated values use the Provenance styles.
+- F9.14 The screen uses the SkyQueue design system (`tokens.css`, `components/bundle.css`, fonts) from `app/assets/`. Real, made-up and estimated values use the Provenance styles.
 
 ### F10. Log and cache
 - F10.1 SQLite: every message, note reading, rule check, plan and decision with timestamps.
@@ -167,7 +167,7 @@ The ATD-2 human-factors study is small (4 to 13 survey responses per condition),
 
 ### F11. Evaluation
 - F11.1 Batch-run 100–300 scenarios across several airports/months, fixed seed, parallel calls; ~20-scenario dev set kept separate.
-- F11.2 All three arms through the same timing calculator: B0 (real order), B1 (solver without notes), HoldShort.
+- F11.2 All three arms through the same timing calculator: B0 (real order), B1 (solver without notes), SkyQueue.
 - F11.3 Report: calibration error; excess taxi minutes; fuel/CO₂ (estimated); delay; missed connections; hard-rule breaks in approved plans; proposals blocked; % agreed by round 2 / 3 / backup; note-reading precision/recall; injection notes refused; latency. Medians with spread, paired per scenario.
 - F11.4 Save five failure cases: deadlock → backup; unsafe proposal blocked; worse than B1; misread note; bad input declined.
 - F11.5 Sensitivity check on burn rate and departure rate.
@@ -216,7 +216,7 @@ docs/            prd.md, streamlit.md
 - [ ] The injection note is refused and logged in 100% of test runs.
 - [ ] Approved plans have zero hard-rule breaks across the test set.
 - [ ] Backup plan appears, labelled, when there is no agreement.
-- [ ] Calibration error and the B0 / B1 / HoldShort table are produced by script.
+- [ ] Calibration error and the B0 / B1 / SkyQueue table are produced by script.
 - [ ] Five failure cases are saved and shown.
 - [ ] Every made-up value is labelled in the app and exports.
 - [ ] Every plan line in an approved plan has a proposing message, agreeing agents, notes used and rule results in the log.

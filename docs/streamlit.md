@@ -1,4 +1,4 @@
-# Using HoldShort in Streamlit
+# Using SkyQueue in Streamlit
 
 Streamlit controls colours and one font through its theme settings, and anything finer through injected CSS. Use both: the theme for the frame, the injected `bundle.css` for the components.
 
@@ -16,7 +16,7 @@ textColor = "#0e1a28"
 font = "sans serif"
 ```
 
-`primaryColor` is `ink`, not yellow: Streamlit uses it for buttons and sliders, and yellow means "held" in HoldShort. Newer Streamlit releases also accept custom font files in the theme section; check the docs for your installed version. If yours does not, the injected CSS below sets the fonts.
+`primaryColor` is `ink`, not yellow: Streamlit uses it for buttons and sliders, and yellow means "held" in SkyQueue. Newer Streamlit releases also accept custom font files in the theme section; check the docs for your installed version. If yours does not, the injected CSS below sets the fonts.
 
 ## 2. Inject tokens and components
 
@@ -28,11 +28,11 @@ import streamlit as st
 
 ASSETS = Path(__file__).parent / "assets"
 
-def load_holdshort():
+def load_skyqueue():
     css = (ASSETS / "tokens.css").read_text() + (ASSETS / "components" / "bundle.css").read_text()
     st.markdown(f"<style>{css}</style>", unsafe_allow_html=True)
 
-load_holdshort()
+load_skyqueue()
 ```
 
 Font files do not load from relative paths inside injected CSS. Serve them with `enableStaticServing = true` under `[server]` and put them in `app/static/`, then point the `@font-face` URLs at `/app/static/<file>`. Without this the app falls back to system fonts, which is acceptable for a demo but loses the data face.

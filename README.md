@@ -1,4 +1,4 @@
-# HoldShort
+# SkyQueue
 
 Autonomous SG 2026 · AI & Aerospace Track · Airbus Challenge #2
 

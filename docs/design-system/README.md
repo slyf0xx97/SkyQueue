@@ -1,4 +1,4 @@
-HoldShort is a supervisor screen where three AI agents (Tower, Pilot, Ground) negotiate a weather-delayed departure queue, a note reader turns free-text ops notes into typed answers, plain code validates those notes and checks every plan, and a person approves it. The look is airport signage and paper flight strips: flat, high-contrast, almost no decoration. Build every screen and slide so a tired tower supervisor can see four things at once: who said what, which rule passed or failed, which numbers are real, and why any line of the plan is there.
+SkyQueue is a supervisor screen where three AI agents (Tower, Pilot, Ground) negotiate a weather-delayed departure queue, a note reader turns free-text ops notes into typed answers, plain code validates those notes and checks every plan, and a person approves it. The look is airport signage and paper flight strips: flat, high-contrast, almost no decoration. Build every screen and slide so a tired tower supervisor can see four things at once: who said what, which rule passed or failed, which numbers are real, and why any line of the plan is there.
 
 This version follows architecture v3 (Jev note reader, validator, baseline B2) and PRD v0.3 (trace links, linked selection, "Why this line", note banners).
 
@@ -28,7 +28,7 @@ This version follows architecture v3 (Jev note reader, validator, baseline B2) a
 ## Visual foundations
 
 - **Colour roles.** `surface-100` page, `surface-200` panel, `surface-300` raised strip or input. `ink` for text, `ink-muted` for secondary text. Hairlines use `line`; the edge of anything you can click or read as an object uses `line-strong`.
-- **Yellow means a person should look.** `hold` marks held aircraft, the hold-short line and the HoldShort result. `hold-tint` with `hold-ink` marks BACKUP plans, ambiguous notes and soft-rule misses. Do not use yellow as decoration or as text on a surface.
+- **Yellow means a person should look.** `hold` marks held aircraft, the hold-short line and the SkyQueue result. `hold-tint` with `hold-ink` marks BACKUP plans, ambiguous notes and soft-rule misses. Do not use yellow as decoration or as text on a surface.
 - **Agent colours.** `tower`, `pilot` and `ground` identify the three agents and nothing else. Each agent also has a glyph and a shape (Tower: square T, Pilot: circle P, Ground: hexagon G), so identity never depends on hue alone. Use `*-tint` for the bubble background, the agent colour for the name, `on-role` on the glyph fill.
 - **The note reader is not an agent.** It is a tool, so it has no colour: a neutral ink diamond with R (`ReaderTag`). Never give it a face, a bubble or a hue. Its output appears as typed answers with confidences, never as prose.
 - **Validator outcomes.** Accepted uses `pass`, ambiguous uses `hold-tint`, flagged uses solid `fail`. Single-source and readers-differ use no new colour: a dashed or double outline plus the marks ✓ and ≠. Mark, word and outline always appear together.
@@ -47,14 +47,14 @@ This version follows architecture v3 (Jev note reader, validator, baseline B2) a
 
 ## Components
 
-Use `AgentTag`, `AgentBubble` and `RoundTimeline` for the negotiation; `ReaderTag`, `OpsNote`, `ReadingCompare` and `ValidatorOutcome` for the notes; `RuleBadge` and `RuleTable` for safety checks; `Provenance` for real/made-up/estimated; `FlightStrip` for the queue (with note banners and the trace footer); `LinkedSelection` and `TraceChain` for tracing a line back to its source; `PlanCard` with `Button` for the decision; and `ResultsBars` for the B0, B1, B2 and HoldShort comparison. Read each component's README for what you supply.
+Use `AgentTag`, `AgentBubble` and `RoundTimeline` for the negotiation; `ReaderTag`, `OpsNote`, `ReadingCompare` and `ValidatorOutcome` for the notes; `RuleBadge` and `RuleTable` for safety checks; `Provenance` for real/made-up/estimated; `FlightStrip` for the queue (with note banners and the trace footer); `LinkedSelection` and `TraceChain` for tracing a line back to its source; `PlanCard` with `Button` for the decision; and `ResultsBars` for the B0, B1, B2 and SkyQueue comparison. Read each component's README for what you supply.
 
 Typical screen order, top to bottom: `RoundTimeline`, notes panel (`OpsNote`), conversation (`AgentBubble`), `RuleTable`, queue (`FlightStrip`), hold-short line, `PlanCard`. The `hs-linkbar` sits above the queue.
 
 ## Iconography
 
 - Use the six marks only: ✓ pass or accepted, ✕ fail or flagged, ≈ estimate, → move, ? ambiguous, ≠ differs. Draw them as text characters in the data face. No icon font and no emoji.
-- The HoldShort mark is `assets/Logo/holdshort-mark.svg`: a navy tile with the hold-short line in yellow. It carries its own ground, so place it on either theme. Use it as the page icon and on the title slide. There is no wordmark file; set the name "HoldShort" in `display-xl`.
+- The SkyQueue mark is `assets/Logo/skyqueue-mark.svg`: a navy tile with the hold-short line in yellow. It carries its own ground, so place it on either theme. Use it as the page icon and on the title slide. There is no wordmark file; set the name "SkyQueue" in `display-xl`.
 
 ## Agent characters
 

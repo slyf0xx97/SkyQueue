@@ -1,6 +1,6 @@
-# HoldShort build guide for Claude Code
+# SkyQueue build guide for Claude Code
 
-HoldShort is our Autonomous SG 2026 entry for Airbus Challenge #2. When weather backs up a departure queue, three AI agents (Tower, Pilot, Ground) negotiate gate holds, gate moves and runway order in at most 3 rounds. Plain code checks every plan against safety rules, and a supervisor approves it.
+SkyQueue is our Autonomous SG 2026 entry for Airbus Challenge #2. When weather backs up a departure queue, three AI agents (Tower, Pilot, Ground) negotiate gate holds, gate moves and runway order in at most 3 rounds. Plain code checks every plan against safety rules, and a supervisor approves it.
 
 ## Read these first
 
@@ -11,7 +11,7 @@ HoldShort is our Autonomous SG 2026 entry for Airbus Challenge #2. When weather 
 
 Overrides from the time-boxed plan:
 - The backup plan is a greedy rule in Python (first come first served, plus gate holds ranked by slack). Don't use OR-Tools or CP-SAT.
-- Evaluation is small: about 30 scenarios for calibration and for B0, B1 and B2, plus HoldShort on the 3 demo scenarios and a few more. Skip the 100 to 300 scenario batch and the sensitivity check.
+- Evaluation is small: about 30 scenarios for calibration and for B0, B1 and B2, plus SkyQueue on the 3 demo scenarios and a few more. Skip the 100 to 300 scenario batch and the sensitivity check.
 - Jev (note reader, via OpenRouter) and the Claude agents run only on the 3 demo scenarios, once, with replies cached and replayed.
 - Skip linked selection and character art. Use the glyph tiles from the AgentTag component for the three agents.
 - The backup plan takes validated note constraints. B2 is the solver plus the same validated notes, with no negotiation.
@@ -22,7 +22,7 @@ Everything for the screen is in `app/assets/`:
 - `tokens.css` (load first, generated from `tokens.json`) and `components/bundle.css`.
 - `fonts/`: Barlow Condensed, IBM Plex Sans and IBM Plex Mono.
 - `components/<Name>/README.md` and `preview.html` for each component: AgentTag, AgentBubble, RoundTimeline, ReaderTag, OpsNote, ReadingCompare, ValidatorOutcome, RuleBadge, RuleTable, Provenance, FlightStrip, LinkedSelection, TraceChain, PlanCard, Button, ResultsBars.
-- `Logo/holdshort-mark.svg` for the page icon.
+- `Logo/skyqueue-mark.svg` for the page icon.
 
 ## Deadline
 

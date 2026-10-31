@@ -1,4 +1,4 @@
-# HoldShort project brief (v3)
+# SkyQueue project brief (v3)
 
 *Engines off, queue on time.*
 
@@ -16,11 +16,11 @@ When weather backs up a departure queue, three independent AI agents (Tower, Pil
 
 ## Our three USPs
 
-HoldShort settles the exceptions that metering tools leave to phone calls, and it can show where its gains come from.
+SkyQueue settles the exceptions that metering tools leave to phone calls, and it can show where its gains come from.
 
-1. Negotiation on top of metering. Metering tools such as NASA's ATD-2 and the FAA's TFDM decide when each aircraft leaves the gate. HoldShort's three agents then settle the cases those tools can't see, such as a crew running out of duty hours, a gate with broken ground power or a tight passenger connection. Today those still go by phone.
+1. Negotiation on top of metering. Metering tools such as NASA's ATD-2 and the FAA's TFDM decide when each aircraft leaves the gate. SkyQueue's three agents then settle the cases those tools can't see, such as a crew running out of duty hours, a gate with broken ground power or a tight passenger connection. Today those still go by phone.
 2. AI suggests, code decides. Nothing an AI model says becomes a rule until plain-code checks accept it. Notes can only add restrictions, so an injected note can't loosen a safety rule, and a human approves every plan.
-3. We show where the value comes from. We run four approaches on the same scenarios: today's order (B0), metering alone (B1), metering with the notes (B2) and HoldShort. Each step isolates one cause, and we report the result even if negotiation adds nothing.
+3. We show where the value comes from. We run four approaches on the same scenarios: today's order (B0), metering alone (B1), metering with the notes (B2) and SkyQueue. Each step isolates one cause, and we report the result even if negotiation adds nothing.
 
 ## Time-boxed build plan (overrides the build plan and evaluation scope below)
 
@@ -48,7 +48,7 @@ The 13:25 checkpoint matters most. If it slips, we cut the Jev call first and le
 | Agents | Keep real Claude calls on the 3 demo scenarios, cached | The demo must show real calls, and a cached replay labelled "recorded" counts |
 | Backup plan | Shrink to a greedy rule in Python: first come first served, plus gate holds ranked by slack. No CP-SAT | Saves about 1.5 hours |
 | Screen | Keep the rule table, notes panel, "Why this line" and Approve, with emoji for the characters | Trust and traceability is 20% of the score |
-| Evaluation | Shrink to about 30 scenarios for calibration and for B0, B1 and B2, plus HoldShort on the demo scenarios and a few more. Results slide labelled "small sample, indicative" | Honest evaluation is 20% of the score |
+| Evaluation | Shrink to about 30 scenarios for calibration and for B0, B1 and B2, plus SkyQueue on the demo scenarios and a few more. Results slide labelled "small sample, indicative" | Honest evaluation is 20% of the score |
 | Cut | The 100 to 300 scenario batch, the sensitivity check, the Claude-vs-Jev comparison, linked selection, character art | A convincing prototype can do without them |
 
 Never cut: calibration, the zero-break check, the injection note, the recorded demo run and B2.
@@ -61,7 +61,7 @@ We pick the 3 demo scenarios so they double as failure cases:
 
 ### Prototype vs production
 
-Each prototype part stands in for a real system. This is how HoldShort would run in advisory mode beside an airport's existing metering tool.
+Each prototype part stands in for a real system. This is how SkyQueue would run in advisory mode beside an airport's existing metering tool.
 
 | Prototype | Production |
 |---|---|
@@ -74,20 +74,9 @@ Each prototype part stands in for a real system. This is how HoldShort would run
 | SQLite log | The airport's audit and incident records |
 | Cached AI replies | Live calls with timeouts that fall back to the backup plan |
 
-## Name candidates
+## Name
 
-HoldShort is the working name. The team is choosing between these alternatives, all built around the queue or the taxiway:
-
-| Name | Why it fits |
-|---|---|
-| Requeue | Says what the product does, reordering the line of planes, in one word |
-| Fair Queue | The agents weigh crew hours, gates and connections, so the order is fair |
-| Calm Queue | Planes wait at the gate with engines off instead of idling in line |
-| Clearway | A clear path to the runway, and real aviation language |
-| Taxi Talk | The three agents talk the taxi queue through |
-| Gatewise | Sounds like a product, and the gate is where the decision happens |
-
-If the name changes, change it before the slides are built.
+The product is called SkyQueue. The team picked it on 31 Oct 2026, replacing the working name HoldShort, because it says in one word what the product manages: the queue of planes waiting to take off.
 
 ## Judging rubric (weights)
 
@@ -128,10 +117,10 @@ v3 keeps every v2 safeguard and adds a dedicated note reader (Jev), a plain-code
 
 ### Evaluation arms (v3)
 
-- B0 today (real order) → B1 solver, no notes → B2 solver + same validated notes, no negotiation → HoldShort. Optional B2-oracle (hidden true constraints) = upper bound for any reader.
-- B0→B1 = optimisation; B1→B2 = notes; B2→HoldShort = negotiation. If B2 matches HoldShort, report it.
+- B0 today (real order) → B1 solver, no notes → B2 solver + same validated notes, no negotiation → SkyQueue. Optional B2-oracle (hidden true constraints) = upper bound for any reader.
+- B0→B1 = optimisation; B1→B2 = notes; B2→SkyQueue = negotiation. If B2 matches SkyQueue, report it.
 - Added metrics: hidden true constraints broken per arm; reader precision/recall for Jev, Claude and union on 30 labelled notes; share ambiguous/flagged/mismatched; over-caution; injection notes turned into rules = 0; trace completeness 100%; Jev cost from logged usage.
-- Demo chart: four bars B0 → B1 → B2 → HoldShort.
+- Demo chart: four bars B0 → B1 → B2 → SkyQueue.
 
 ### Build order and cuts (v3)
 
@@ -159,7 +148,7 @@ A full review found ten gaps. All are fixed in this version:
 |---|---|---|
 | 1 | Brief asks for a revised arrival time, gate assignment or flight-plan change; v1 only reordered departures | Every plan now outputs each flight's revised departure **and arrival** time, and Ground can **reassign a gate** (move to a remote stand) |
 | 2 | Comparing our simulated plan to real recorded taxi times was unfair | Baseline now runs through the **same timing calculator**, and we first **calibrate** the calculator against real 2015 taxi times |
-| 3 | Gate-holding already exists (NASA ATD-2, FAA TFDM surface metering) | We say so and position HoldShort as the **cross-organisation negotiation layer** metering lacks; the metering-style solver is our baseline to beat |
+| 3 | Gate-holding already exists (NASA ATD-2, FAA TFDM surface metering) | We say so and position SkyQueue as the **cross-organisation negotiation layer** metering lacks; the metering-style solver is our baseline to beat |
 | 4 | No proof the AI adds anything | Each scenario carries **free-text ops notes** only the agents can read; the solver without them is the baseline |
 | 5 | Too much to build in a day | **Streamlit** replaces FastAPI + React |
 | 6 | ~1,800 API calls for evaluation | Cheaper model for batch runs, parallel calls, **cached replies** |
@@ -198,11 +187,11 @@ Holding departures at the gate is a proven idea. NASA's ATD-2 trial at Charlotte
 
 Metering calculates *when* each aircraft should leave the gate. It does not negotiate the trade-offs between organisations: a crew running out of duty hours, a gate needed for an inbound, a passenger connection, a broken ground power unit that makes an engines-off hold impossible. Today those still go by phone.
 
-**HoldShort adds that negotiation.** Our backup solver behaves like metering, so it is the baseline we have to beat.
+**SkyQueue adds that negotiation.** Our backup solver behaves like metering, so it is the baseline we have to beat.
 
 ## 3. How it meets the challenge brief
 
-| Brief asks for | HoldShort |
+| Brief asks for | SkyQueue |
 |---|---|
 | ATC agent: wake spacing, taxiway blockage, throughput | Tower agent: runway order, spacing, taxiway capacity, departure rate |
 | Pilot agent: fuel, safety, turbulence, connections | Pilot agent: fuel, crew hours, connections; turbulence via ops notes |
@@ -250,7 +239,7 @@ flowchart TD
   F -- no --> G[Backup plan - OR-Tools, uses checked notes]
   G -- backup plan --> H
   H --> L[Record - messages, readings, checks, trace links, cache - SQLite/JSON]
-  L -.-> X[Evaluation: B0 -> B1 -> B2 -> HoldShort]
+  L -.-> X[Evaluation: B0 -> B1 -> B2 -> SkyQueue]
 ```
 
 The AI agents only suggest. They read the ops notes, propose plans and argue for their side. Plain code checks every plan against the safety rules before anyone else sees it. If there's no agreement by the round limit, the backup plan is used. A person always makes the final call, and everything is saved.
@@ -344,7 +333,7 @@ Each agreed plan also lists every flight's **revised departure and arrival time*
 
 - **B0, today:** first-come-first-served in the real order.
 - **B1, metering-style:** backup solver alone, without the ops notes.
-- **HoldShort:** agents + rules, with the notes.
+- **SkyQueue:** agents + rules, with the notes.
 
 **Metrics:**
 
@@ -387,18 +376,18 @@ We write the ops notes ourselves, so a judge could say we set our own exam. We g
 
 ## 8. Impact (10%)
 
-Most of the fuel saving comes from holding aircraft at the gate. That's what metering does, and ATD-2 proved it at Charlotte. HoldShort keeps that saving and adds the exceptions metering can't handle, so our headline numbers measure those exceptions.
+Most of the fuel saving comes from holding aircraft at the gate. That's what metering does, and ATD-2 proved it at Charlotte. SkyQueue keeps that saving and adds the exceptions metering can't handle, so our headline numbers measure those exceptions.
 
 Headline numbers, measured on the test set:
 
-- Hidden constraints broken per scenario, compared across B1, B2 and HoldShort.
+- Hidden constraints broken per scenario, compared across B1, B2 and SkyQueue.
 - Missed connections, compared with B0 and B1.
 - Exceptions the agents settled, each of which needs a phone call today.
 - Hard safety-rule breaks in approved plans, which must be zero.
 
 Fuel and CO2 come second. We label them as estimates and credit them to gate-holding. If we scale results to all weather-delayed hours at the demo airport in 2015, we label that as a separate estimate.
 
-Adoption path: HoldShort runs beside existing metering tools in advisory mode, and the supervisor keeps full authority.
+Adoption path: SkyQueue runs beside existing metering tools in advisory mode, and the supervisor keeps full authority.
 
 ## 9. Demo (3 minutes, Time discipline 5%)
 

@@ -1,4 +1,4 @@
-# HoldShort — Architecture v3 (fixes + Jev note reader)
+# SkyQueue — Architecture v3 (fixes + Jev note reader)
 
 Oct 31, 2026 · @Ghernie
 
@@ -112,13 +112,13 @@ v3 evaluates five arms through the same timing calculator, so each step between 
 | --- | --- | --- | --- |
 | B0 | The real order, first come first served | No | Today |
 | B1 | OR-Tools | No | Metering-style optimisation alone |
-| B2 (new) | OR-Tools plus the validated constraints from the HoldShort run | Yes, through the reader | What the notes add |
+| B2 (new) | OR-Tools plus the validated constraints from the SkyQueue run | Yes, through the reader | What the notes add |
 | B2-oracle (new) | OR-Tools plus the hidden ground-truth constraints | Yes, perfectly | Upper bound for any reader |
-| HoldShort | Agents, rules and validated constraints | Yes | What negotiation adds beyond B2 |
+| SkyQueue | Agents, rules and validated constraints | Yes | What negotiation adds beyond B2 |
 
-How to read the steps: B0 to B1 is optimisation, B1 to B2 is the notes, B2 to HoldShort is negotiation, and B2 to B2-oracle is the cost of reader errors. Feed B2 the same validated set the HoldShort run used, so the two differ only in negotiation.
+How to read the steps: B0 to B1 is optimisation, B1 to B2 is the notes, B2 to SkyQueue is negotiation, and B2 to B2-oracle is the cost of reader errors. Feed B2 the same validated set the SkyQueue run used, so the two differ only in negotiation.
 
-If B2 matches HoldShort, report it. The agents' value would then sit in cases a solver cannot express, such as soft trade-offs and gate swaps, and the report should say which scenario types those are.
+If B2 matches SkyQueue, report it. The agents' value would then sit in cases a solver cannot express, such as soft trade-offs and gate swaps, and the report should say which scenario types those are.
 
 **Metrics added to v2's table:**
 
@@ -217,7 +217,7 @@ The biggest risk is Jev itself: it is new, so the design makes it optional and k
 | A non-Claude model may break the organisers' rules (our brief names the Claude API) | Ask the organisers; make `ClaudeReader` the default if unsure |
 | Reader errors | Union policy, ambiguity labels and flags; the hard-rule guarantee is unaffected |
 | Over-caution from accepting the union | Measure it; switch to one reader's output if it forces too many fallbacks |
-| B2 matches HoldShort | Report it, and name the scenario types where negotiation still helps |
+| B2 matches SkyQueue | Report it, and name the scenario types where negotiation still helps |
 | Key or credit trouble on demo day | Cached replies, a recorded run, and the backup solver, which needs no API |
 | Thresholds tuned on the wrong notes | Tune on dev scenarios only; leave the 30 labelled notes untouched |
 
@@ -232,7 +232,7 @@ Decisions for the team now:
 ## Sources
 
 - [Jev on OpenRouter](https://openrouter.ai/docs/guides/community/jev.md): model IDs, access, question types, pricing basis, limits and other decision models, as of 16 Oct 2026. Opened.
-- [HoldShort project brief, v2](https://claude.ai/artifact/965TKTqRrFW6i5qqinx5Zj): the design this doc changes. Opened.
+- [SkyQueue project brief, v2](https://claude.ai/artifact/965TKTqRrFW6i5qqinx5Zj): the design this doc changes. Opened.
 - [SiliconANGLE, 16 Sep 2026](https://siliconangle.com/2026-09-16/typesafe-ai-exits-stealth-with-40m-to-build-ai-for-use-by-software/): early-access launch and TypeSafe's own test claims. Read from search results, not opened.
 - [Let's Data Science launch coverage](https://letsdatascience.com/news/typesafe-ai-launches-jev-decision-model-889a38c0): launch date of 15 Sep 2026. Read from search results, not opened.
 - [Scrapbox summary of the TypeSafe docs](https://scrapbox.io/suzuki-log/Jev_-_TypeSafe_AI): how TypeSafe's evaluation was scored. Read from search results, not opened.

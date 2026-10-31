@@ -1,4 +1,4 @@
-/* HoldShort components: plain CSS over tokens.css. Every class is prefixed hs-. */
+/* SkyQueue components: plain CSS over tokens.css. Every class is prefixed hs-. */
 
 .hs { margin: 0; padding: 16px; background: var(--surface-100); color: var(--ink); font-family: var(--font-sans); font-size: 14px; line-height: 21px; }
 .hs *, .hs *::before, .hs *::after { box-sizing: border-box; }
@@ -135,7 +135,7 @@
 .hs-plan__status { margin-left: auto; font-size: 13px; color: var(--ink-muted); }
 .hs-plan--approved .hs-plan__status { color: var(--pass); font-weight: 600; }
 
-/* Results bars (B0 / B1 / HoldShort) */
+/* Results bars (B0 / B1 / SkyQueue) */
 .hs-results { display: flex; flex-direction: column; gap: 24px; max-width: 720px; }
 .hs-results__metric { display: flex; flex-direction: column; gap: 8px; }
 .hs-results__head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 12px; }

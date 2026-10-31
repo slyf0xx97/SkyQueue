@@ -1,4 +1,4 @@
-Button is the only way a person makes a decision in HoldShort: Approve and Reject on a plan, plus quiet actions such as exporting the log. You supply the label and the click handler; the component supplies the height, colour and focus ring.
+Button is the only way a person makes a decision in SkyQueue: Approve and Reject on a plan, plus quiet actions such as exporting the log. You supply the label and the click handler; the component supplies the height, colour and focus ring.
 
 ## Variants
 
