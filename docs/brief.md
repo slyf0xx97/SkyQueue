@@ -13,6 +13,7 @@ SkyQueue helps a tower supervisor clear a departure queue that a storm has backe
 | Stack | Python, Claude API, Pydantic, Streamlit, SQLite |
 | Code | github.com/slyf0xx97/taxi-out-negotiator, with the build spec in `docs/prd.md` |
 | Submit | 15:20 SGT on 31 Oct 2026 |
+| Live brief | https://claude.ai/artifact/965TKTqRrFW6i5qqinx5Zj, with both diagrams |
 | Live brief | https://claude.ai/artifact/965TKTqRrFW6i5qqinx5Zj (with both diagrams) |
 
 *Plain-words diagram: see the live brief.*
