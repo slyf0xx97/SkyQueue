@@ -38,33 +38,20 @@ This is the diagram from the How it works section of the live site. The numbered
 ### Pipeline
 
 ```mermaid
-flowchart TD
-    DOT[("2015 US DOT flights.csv<br/>trigger rows")] --> SCN["Scenario builder<br/>src/sim/scenarios.py<br/>(code)"]
-    SCN --> INBOX["Ops inbox<br/>synthetic notes + visitor messages"]
-    INBOX --> READER["Note reader<br/>ClaudeReader / FakeReader<br/>(AI)"]
-    READER --> VAL{"Validator<br/>src/checker/validator.py<br/>(code)"}
-    VAL -->|ACCEPTED| CONS["Validated constraints"]
-    VAL -->|AMBIGUOUS or FLAGGED| DROP["Shown to the supervisor,<br/>never a rule"]
-    CONS --> TOWER["Tower agent proposes a full plan<br/>(AI)"]
-    TOWER --> RULES{"Safety rules + timing model<br/>src/checker/rules.py, src/sim/timing.py<br/>(code)"}
-    RULES -->|hard rule fails| BLOCK["Blocked: rule IDs go back to Tower only"]
-    BLOCK --> NEXT{"Rounds left?"}
-    RULES -->|all hard rules pass| PG["Pilot and Ground<br/>ACCEPT, COUNTER or REJECT<br/>(AI)"]
-    PG -->|both ACCEPT| AGREED["Agreed plan"]
-    PG -->|counter or reject| NEXT
-    NEXT -->|yes| TOWER
-    NEXT -->|no deal after 3 rounds| BACKUP["Greedy backup plan<br/>src/solver/backup.py<br/>(code)"]
-    CONS -.-> BACKUP
-    AGREED --> SUP["Supervisor screen<br/>Why this line, Approve / Reject<br/>(person)"]
-    BACKUP --> SUP
-    SUP --> LOG[("SQLite audit log<br/>runs.sqlite")]
-
-    VAL -.-> LOG
-    RULES -.-> LOG
-    PG -.-> LOG
+flowchart LR
+    A["Ops inbox"] --> B["Note reader<br/>AI"] --> C{"Validator<br/>code"}
+    C -->|accepted| D["Agents negotiate<br/>AI, max 3 rounds"]
+    D --> E{"Safety rules<br/>code"}
+    E -->|all pass, all agree| F["Supervisor<br/>approves"]
+    E -->|no deal| G["Backup plan<br/>code"] --> F
+    F --> H[("Audit log")]
 ```
 
-Every arrow into the log is a real write: readings, decisions, every message (blocked or not), every rule check, the final plan, trace links and the supervisor's decision.
+1. **Read.** The note reader turns each ops message into a typed answer. The validator keeps only the ones it can check; unclear or suspicious notes are shown to the supervisor but never become rules.
+2. **Negotiate.** Tower proposes a full plan. Code checks it against the safety rules and the timing model, then Pilot and Ground accept, counter or reject. A blocked plan goes back to Tower with the rule IDs that failed.
+3. **Fall back.** If there is no agreement after 3 rounds, the greedy backup plan builds one from the same checked notes, with no AI involved.
+4. **Approve.** The supervisor sees why each line is there and approves or rejects the plan.
+5. **Log.** Every reading, message, rule check, plan and decision is written to `runs.sqlite`.
 
 ### Components
 
