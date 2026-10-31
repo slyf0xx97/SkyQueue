@@ -1,4 +1,4 @@
-ReaderTag names the note reader: the tool that reads each free-text ops note once and returns typed answers with a confidence. In architecture v3 this is Jev, with Claude as a drop-in fallback and a fake reader for tests. You supply the reader's name and pinned version.
+ReaderTag names the note reader: the tool that reads each free-text ops note once and returns typed answers with a confidence. In SkyQueue this is ClaudeReader (a Claude API call separate from the agents), with a fake reader for tests. You supply the reader name and model.
 
 ## Markup
 
@@ -14,7 +14,7 @@ ReaderTag names the note reader: the tool that reads each free-text ops note onc
 
 | Class | When |
 |---|---|
-| `hs-reader` | JevReader or ClaudeReader. Solid ink diamond. |
+| `hs-reader` | ClaudeReader. Solid ink diamond. |
 | `hs-reader hs-reader--test` | FakeReader, which returns the hidden ground truth. Hatched diamond and the word TEST. Never show it in the live demo. |
 
 ## Rules
@@ -22,4 +22,4 @@ ReaderTag names the note reader: the tool that reads each free-text ops note onc
 - The reader is a tool, not a character. It gets no agent colour, no face and no speech bubble. Its readings appear as typed answers (`ReadingCompare`, `OpsNote`), never as prose.
 - Identity is shape plus letter: diamond with R. Tower is a square, Pilot a circle, Ground a hexagon; the diamond is taken by the reader only.
 - Always show the pinned version in mono ("jev-1.14"). The vendor's speed and accuracy claims are not ours; the screen shows only what we measured.
-- Say which reader produced a reading wherever a reading is shown. The supervisor must be able to tell Jev from an agent.
+- Say which reader produced a reading wherever a reading is shown. The supervisor must be able to tell the note reader from an agent.
