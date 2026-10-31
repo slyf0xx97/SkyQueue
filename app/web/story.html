@@ -6,7 +6,7 @@
   <div class="ctl"><button class="go" id="replay">▶ Play</button></div>
 </div>
 
-<div class="step" id="st1"><span class="n">1</span><h3>Ops messages become rules</h3>
+<div class="step" id="st1"><span class="n">1</span><h3>Read the ops inbox</h3>
   <span class="i" tabindex="0" data-tip="Free-text messages from ramp, crew and dispatch. The note reader turns each into typed answers. Plain code then decides whether it becomes a rule.">i</span></div>
 <div class="explain"><span><b>AI reads</b> each message from ramp, crew and dispatch</span><i>→</i><span><b>Code checks</b> that it is real, specific and safe</span><i>→</i><span><b>It becomes a rule</b> the agents must follow in step 2</span></div>
 <div class="relay panel" id="relay">
@@ -34,12 +34,12 @@
   <div class="table panel" id="table">
     <div class="rounds" id="rounds"><span>Round 1</span><span>Round 2</span><span>Round 3</span></div>
     <div class="rulebook" id="rulebook" title="Rules from step 1"></div>
-    <svg class="wire" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M14 38 L47 38"/><path d="M47 38 L82 18"/><path d="M47 38 L82 60"/></svg>
+    <svg class="wire" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M14 38 L47 38"/><path d="M47 38 L82 18"/><path d="M47 38 L84 56"/></svg>
     <div class="seat T" style="left:14%;top:38%"><svg viewBox="0 0 16 16"><use href="#ch-T"/></svg><b>Tower</b></div>
     <div class="gate"><div class="shield" id="shield">?</div><b>Safety rules</b><span class="sub2">8 rules + notes · plain code
       <span class="i down" tabindex="0" data-tip="Every plan is checked against the 8 rules listed below plus every ops message accepted in step 1. A plan that breaks one goes back to Tower; Pilot and Ground never see it.">i</span></span><small id="gateMsg"></small></div>
     <div class="seat P" style="left:82%;top:18%"><svg viewBox="0 0 16 16"><use href="#ch-P"/></svg><b>Pilot</b></div>
-    <div class="seat G" style="left:82%;top:60%"><svg viewBox="0 0 16 16"><use href="#ch-G"/></svg><b>Ground</b></div>
+    <div class="seat G" style="left:84%;top:56%"><svg viewBox="0 0 16 16"><use href="#ch-G"/></svg><b>Ground</b></div>
     <div class="chat" id="chat" role="button" tabindex="0" aria-label="Open the full transcript"><div class="chat-h"><span>All · negotiation</span><em>⤢ expand</em></div><div class="chat-lines" id="chatLines"></div></div>
   </div>
   <div class="rules panel"><div class="rules-h"><b>Safety rules</b><span>plain code, checked on every plan</span></div>
@@ -232,7 +232,7 @@ async function relay(id) {
 }
 
 // ---------- 2. negotiation ----------
-const POS = { T: [14, 38], C: [47, 38], P: [82, 18], G: [82, 60] };
+const POS = { T: [14, 38], C: [47, 38], P: [82, 18], G: [84, 56] };
 function packet(text, cls, from) { const p = document.createElement('div'); p.className = 'packet ' + cls; p.textContent = text; p.style.left = POS[from][0] + '%'; p.style.top = POS[from][1] + '%'; $('table').appendChild(p); return p; }
 const moveTo = (p, to) => { p.style.left = POS[to][0] + '%'; p.style.top = POS[to][1] + '%'; };
 function say(who, text) {

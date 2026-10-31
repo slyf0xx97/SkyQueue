@@ -51,7 +51,15 @@ iframe { border: 0; display: block; }
 .stButton button, .stDownloadButton button { font-family: 'Spline Sans Mono', monospace; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
 .stButton button[kind="primary"] { color: #121315; }
 .setup-h { font: 900 26px 'Anybody', sans-serif; font-stretch: 118%; text-transform: uppercase; margin: 0 0 4px; color: #f2f0ea; }
-.setup-h span { color: #ffd400; } .setup-p { color: #cfd0d3; margin: 0 0 12px; font-size: 15px; }
+.setup-h span { color: #ffd400; }
+.nowat { display: flex; align-items: center; gap: 12px; margin: 10px 0 12px; padding: 12px 14px; border: 2px solid #ffd400; border-radius: 8px; background: #ffd40012; }
+.nowat .pin { font-size: 26px; } .nowat small { display: block; font: 700 10px 'Spline Sans Mono', monospace; letter-spacing: .12em; text-transform: uppercase; color: #8d9097; }
+.nowat b { font: 900 34px/1 'Anybody', sans-serif; font-stretch: 118%; color: #ffd400; margin-right: 10px; } .nowat em { font-style: normal; font-size: 16px; color: #f2f0ea; }
+.dset { margin-top: 14px; padding: 12px 14px; background: #121315; border-radius: 6px; border: 1px solid #ffffff14; }
+.dset-h { font: 700 11px 'Spline Sans Mono', monospace; letter-spacing: .12em; text-transform: uppercase; color: #5ccf8a; margin-bottom: 8px; }
+.dchip { display: flex; align-items: center; gap: 10px; padding: 6px 0; font-size: 14px; color: #cfd0d3; }
+.dchip svg { width: 22px; height: 22px; flex: none; } .dchip b { font-family: 'Spline Sans Mono', monospace; color: #f2f0ea; margin-right: 6px; }
+.st-key-setup { border-top: 4px solid #ffd400 !important; } .setup-p { color: #cfd0d3; margin: 0 0 12px; font-size: 15px; }
 .wx { background: #232428; border-radius: 6px; padding: 14px 16px; color: #f2f0ea; font-family: 'Anybody', sans-serif; }
 .wx .cat { display: inline-block; font: 800 13px 'Spline Sans Mono', monospace; padding: 3px 9px; border-radius: 3px; color: #121315; }
 .wx .big { font: 900 30px 'Anybody', sans-serif; font-stretch: 112%; }
@@ -82,6 +90,11 @@ CAT_COLOUR = {"VFR": "#5ccf8a", "MVFR": "#6aa8ff", "IFR": "#ff5a4e", "LIFR": "#d
 CAT_MEANING = {"VFR": "Visual flight rules: clear, good visibility", "MVFR": "Marginal: lower cloud or haze",
                "IFR": "Instrument rules: low cloud or poor visibility", "LIFR": "Low instrument rules: very low cloud or fog"}
 _s = 'fill="none" stroke="#ffd400" stroke-width="2" stroke-linecap="round"'
+DS_ICON = {
+    "db": f'<svg viewBox="0 0 24 24" {_s}><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg>',
+    "pin": f'<svg viewBox="0 0 24 24" {_s}><path d="M12 22s7-7 7-12a7 7 0 1 0-14 0c0 5 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg>',
+    "plane": f'<svg viewBox="0 0 24 24" {_s}><path d="M2 13l8-2 4-8 2 1-2 7 6 1 2-2h2l-2 4 2 4h-2l-2-2-6 1 2 7-2 1-4-8-8-2z"/></svg>',
+}
 WX_ICON = {
     "thermo": f'<svg viewBox="0 0 24 24" {_s}><path d="M10 4a2 2 0 0 1 4 0v10a4 4 0 1 1-4 0z"/><path d="M12 9v7"/></svg>',
     "wind": f'<svg viewBox="0 0 24 24" {_s}><path d="M3 8h11a3 3 0 1 0-3-3M3 12h16a3 3 0 1 1-3 3M3 16h8"/></svg>',
@@ -208,7 +221,7 @@ with st.spinner(f"Loading storm days at {info['city']}…"):
 
 # ---------- pinned header ----------
 with st.container(key="navbar"):
-    components.html(page("nav.html", None), height=64, scrolling=False)
+    components.html(page("nav.html", {"code": airport, "city": info["city"]}), height=64, scrolling=False)
 
 # ---------- hero ----------
 components.html(page("hero.html", dict(order=list(DEMOS), airport=info["city"],
@@ -219,8 +232,13 @@ components.html(page("hero.html", dict(order=list(DEMOS), airport=info["city"],
 with st.container(key="setup"):
     left, right = st.columns([1, 1.3], gap="large")
     with left:
-        st.markdown('<p class="setup-h">Pick an <span>airport</span></p><p class="setup-p">The 8 busiest airports in the 2015 data. '
-                    'Each sample replays one of its real storm days.</p>', unsafe_allow_html=True)
+        st.markdown(f'''<p class="setup-h">Choose your <span>airport</span></p>
+<div class="nowat"><span class="pin">📍</span><div><small>Now showing</small><b>{airport}</b><em>{info["name"]}</em></div></div>
+<p class="setup-p">Pick any of the 8 airports with the most delayed departures. Every sample replays one of its real storm days.</p>
+<div class="dset"><div class="dset-h">Built on the challenge dataset</div>
+<div class="dchip">{DS_ICON["db"]}<span><b>flights.csv</b> 2015 US DOT on-time data · 358,774 delay records</span></div>
+<div class="dchip">{DS_ICON["pin"]}<span><b>airports.csv</b> 322 airports</span></div>
+<div class="dchip">{DS_ICON["plane"]}<span><b>airlines.csv</b> 14 airlines</span></div></div>''', unsafe_allow_html=True)
         pick = st.selectbox("Airport", AIRPORTS, index=AIRPORTS.index(airport),
                             format_func=lambda c: f"{c} · {airport_info(c)['name']}")
         if pick != airport:
@@ -275,7 +293,7 @@ with st.container(key="nav"):
     key_on = bool(st.session_state.get("api_key", "").strip())
     a, b, c, d = st.columns([1.35, 2.5, 1.9, .42], vertical_alignment="center")
     a.markdown(f'<div class="keytoggle {"on" if key_on else "off"}"><span class="knob"></span>'
-               f'<span class="kt">{"Live · key on" if key_on else "Recorded"}</span></div>', unsafe_allow_html=True)
+               f'<span class="kt">{"API key on" if key_on else "API key off"}</span></div>', unsafe_allow_html=True)
     b.text_input("API key", key="api_key", type="password", label_visibility="collapsed",
                  placeholder="Paste your Claude or OpenRouter API key",
                  help="Used only for live runs, in this browser session. Never saved, logged or sent anywhere else.")

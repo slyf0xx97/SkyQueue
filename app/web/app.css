@@ -501,3 +501,11 @@ svg use { image-rendering: pixelated; }
 .apstat .sv em { font: 500 10px 'Spline Sans Mono', monospace; color: var(--dim); font-style: normal; }
 .decide2.two { grid-template-columns: 1fr 1.4fr; align-items: stretch; }
 .decide2 .decide { margin-top: 0; flex-direction: column; align-items: flex-start; justify-content: center; }
+
+/* v13 */
+.live-head { display: none; }
+.auto { padding: 7px 12px; gap: 10px; margin-bottom: 18px; border-width: 2px; }
+.auto b { font-size: 20px; letter-spacing: .04em; }
+.auto span { font-size: 11px; line-height: 1.35; }
+.auto .dot { width: 10px; height: 10px; }
+.chat { width: min(62%, 420px); }
