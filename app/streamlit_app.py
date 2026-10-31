@@ -130,7 +130,7 @@ def weather(icao: str) -> dict | None:
         return None
 
 
-def run_live(name: str, airport: str, creds: dict, model: str) -> str:
+def run_live(name: str, airport: str, creds: dict, models: dict) -> str:
     from src.agents.claude import ClaudeAgents
     from src.agents.readers import ClaudeReader
     from src.coordinator import Coordinator
@@ -139,7 +139,7 @@ def run_live(name: str, airport: str, creds: dict, model: str) -> str:
     rows = [dict(source=r["source"], ref=r["ref"], text=r["text"], received=r["received_at"][11:16]) for r in queued]
     s = with_visitor_notes(demo_scenario(name, airport), rows)
     log = RunLog(f"live-{name}-{s.scenario_id}")
-    Coordinator(s, ClaudeReader(model, creds), ClaudeAgents(model, creds), log).run()
+    Coordinator(s, ClaudeReader(models["READER"], creds), ClaudeAgents(models["TOWER"], creds, models), log).run()
     inbox_mark_read([r["msg_no"] for r in queued], log.run_id)
     return log.run_id
 
@@ -302,7 +302,11 @@ with st.container(key="nav"):
         k = st.session_state.get("api_key", "").strip()
         provider = "OpenRouter" if k.startswith("sk-or-") else "Claude API"
         st.markdown(f"**Provider:** {provider} (from your key)")
-        model = st.selectbox("Model", MODELS[provider])
+        st.markdown("**Model for each agent**")
+        models = {}
+        for role, label in (("READER", "Note reader"), ("TOWER", "Tower"), ("PILOT", "Pilot"), ("GROUND", "Ground")):
+            models[role] = st.selectbox(label, MODELS[provider], key=f"model_{role}",
+                                        help="Bigger models reason better; smaller ones answer faster and cost less.")
         workspace = st.text_input("Workspace ID (optional)", help="Only if your Claude key isn't tied to a workspace.") \
             if provider == "Claude API" else None
         which = st.selectbox("Scenario", list(DEMOS), format_func=lambda k: f"{samples[k]['name']} · {airport}", key="livewhich")
@@ -313,7 +317,9 @@ if go:
              "workspace": (workspace or "").strip() or None}
     with st.spinner("The note reader and three agents are working…"):
         try:
-            live[(airport, which)] = (run_live(which, airport, creds, model), model)
+            used = sorted(set(models.values()))
+            label = used[0] if len(used) == 1 else f"{len(used)} models"
+            live[(airport, which)] = (run_live(which, airport, creds, models), label)
             st.session_state.autoplay = which
             st.rerun()
         except Exception as e:

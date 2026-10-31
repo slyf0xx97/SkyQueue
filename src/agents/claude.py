@@ -64,8 +64,9 @@ def _view(role: str, s) -> list[dict]:
 class ClaudeAgents:
     name = "CLAUDE"
 
-    def __init__(self, model: str | None = None, creds: dict | None = None):
+    def __init__(self, model: str | None = None, creds: dict | None = None, models: dict | None = None):
         self.model = model or CFG["agents"]["model"]
+        self.models = models or {}      # role -> model, e.g. {"TOWER": "claude-opus-5-5"}
         self.creds = creds
 
     def respond(self, role, rnd, s, decisions, plan, feedback) -> AgentReply:
@@ -86,7 +87,7 @@ class ClaudeAgents:
         user = json.dumps(ctx)
         for attempt in range(2):                  # F5.4: one re-ask, then REJECT
             try:
-                out = call_json(self.model, system, user if not attempt else user + "\n\nYour last reply was invalid. Reply again.",
+                out = call_json(self.models.get(role, self.model), system, user if not attempt else user + "\n\nYour last reply was invalid. Reply again.",
                                 AgentOut, purpose=f"{role}:R{rnd}:{s.scenario_id}", creds=self.creds)
                 return AgentReply(**{**out.model_dump(), "rationale": out.rationale[:300]})
             except (ValidationError, ValueError) as e:
