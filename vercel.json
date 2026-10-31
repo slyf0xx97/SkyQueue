@@ -1,0 +1,13 @@
+{
+  "services": {
+    "app": { "runtime": "container", "root": ".", "entrypoint": "Dockerfile.vercel" },
+    "deck": { "root": "site" }
+  },
+  "redirects": [
+    { "source": "/presentation", "destination": "/presentation/", "permanent": false }
+  ],
+  "rewrites": [
+    { "source": "/presentation/(.*)", "destination": { "service": "deck" } },
+    { "source": "/(.*)", "destination": { "service": "app" } }
+  ]
+}

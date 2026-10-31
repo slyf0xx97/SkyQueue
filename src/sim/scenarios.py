@@ -19,7 +19,11 @@ def _mins(hhmm) -> int:
 
 @lru_cache(maxsize=1)
 def load_flights() -> pd.DataFrame:
-    df = pd.read_csv(ROOT / "data" / "flights.csv", low_memory=False)
+    full = ROOT / "data" / "flights.csv"
+    if full.exists():
+        df = pd.read_csv(full, low_memory=False)
+    else:  # hosted copy: only the 8 demo airports' departures, original row numbers kept (scripts/make_extract.py)
+        df = pd.read_csv(ROOT / "data" / "flights_extract.csv.gz", index_col="ROW", low_memory=False)
     df["valid"] = (df.DIVERTED == 0) & (df.CANCELLED == 0) & df.TAXI_OUT.notna() \
         & df.DEPARTURE_TIME.notna() & df.WHEELS_OFF.notna() & df.AIR_TIME.notna()
     return df

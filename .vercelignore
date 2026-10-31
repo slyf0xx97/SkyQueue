@@ -1,0 +1,16 @@
+.env
+.venv/
+.git/
+data/flights.csv
+*.zip
+__pycache__/
+*.sqlite
+*.sqlite-journal
+*.db
+cache/
+.pytest_cache/
+.playwright-mcp/
+.streamlit/secrets.toml
+node_modules/
+.env.local
+.vercel/

@@ -13,3 +13,7 @@ Thumbs.db
 .streamlit/secrets.toml
 .playwright-mcp/
 runs.sqlite
+
+.vercel
+.env*
+!.env.example
