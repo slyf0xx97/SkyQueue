@@ -1,0 +1,51 @@
+<!-- @dsCard group="Plan" height=820 subtitle="Final plan: agreed, backup, approved; example data" -->
+<div class="hs hs-stack" style="gap:32px">
+
+  <section class="hs-plan">
+    <header class="hs-plan__head">
+      <h3 class="hs-plan__title">Final plan</h3>
+      <span class="hs-plan__source hs-plan__source--agreed">✓ Agreed in round 2</span>
+    </header>
+    <p class="hs-plan__summary">Release DL455 and UA567 first, hold AA1234 at remote stand R4 until 14:20. Three rules were checked eleven times, with no failures. One connection on UA567 is protected.</p>
+    <dl class="hs-plan__facts">
+      <div class="hs-plan__fact"><dt>Hard rules</dt><dd>11 / 11 pass</dd></div>
+      <div class="hs-plan__fact"><dt>Lines traced</dt><dd>4 / 4</dd></div>
+      <div class="hs-plan__fact"><dt>Excess taxi</dt><dd><span class="hs-val--estimate hs-val">−31 min</span></dd></div>
+      <div class="hs-plan__fact"><dt>Fuel</dt><dd><span class="hs-val--estimate hs-val">−310 kg</span></dd></div>
+    </dl>
+    <span class="hs-holdline" role="presentation"></span>
+    <div class="hs-plan__actions">
+      <button class="hs-btn hs-btn--approve hs-btn--lg" type="button">Approve plan</button>
+      <button class="hs-btn hs-btn--reject hs-btn--lg" type="button">Reject plan</button>
+      <span class="hs-plan__status">Waiting for you. Nothing is released until you approve.</span>
+    </div>
+  </section>
+
+  <section class="hs-plan">
+    <header class="hs-plan__head">
+      <h3 class="hs-plan__title">Final plan</h3>
+      <span class="hs-plan__source hs-plan__source--backup">! Backup plan</span>
+    </header>
+    <p class="hs-plan__summary">Agents did not agree by round 3. This is the solver's backup plan, made with the validated notes but without negotiation. Blocked by GATE-02 on the last agent proposal.</p>
+    <dl class="hs-plan__facts">
+      <div class="hs-plan__fact"><dt>Hard rules</dt><dd>9 / 9 pass</dd></div>
+      <div class="hs-plan__fact"><dt>Lines traced</dt><dd>4 / 4</dd></div>
+      <div class="hs-plan__fact"><dt>Notes applied</dt><dd>2 of 3 accepted</dd></div>
+    </dl>
+    <div class="hs-plan__actions">
+      <button class="hs-btn hs-btn--approve hs-btn--lg" type="button">Approve backup plan</button>
+      <button class="hs-btn hs-btn--reject hs-btn--lg" type="button">Reject plan</button>
+    </div>
+  </section>
+
+  <section class="hs-plan hs-plan--approved">
+    <header class="hs-plan__head">
+      <h3 class="hs-plan__title">Final plan</h3>
+      <span class="hs-plan__source hs-plan__source--agreed">✓ Agreed in round 2</span>
+    </header>
+    <div class="hs-plan__actions">
+      <button class="hs-btn hs-btn--approve hs-btn--lg" type="button" disabled>Approved</button>
+      <span class="hs-plan__status">Approved by supervisor at 14:07. Written to the log.</span>
+    </div>
+  </section>
+</div>

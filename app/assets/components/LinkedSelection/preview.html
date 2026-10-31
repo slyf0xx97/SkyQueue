@@ -1,0 +1,72 @@
+<!-- @dsCard group="Trace" height=870 subtitle="One flight picked, everything it touches outlined; example data" -->
+<div class="hs hs-stack">
+  <div class="hs-linkbar">
+    <span class="hs-label">Selected</span><span class="hs-linkbar__flight">AA1234</span>
+    <span class="hs-linkbar__counts">1 strip · 2 messages · 1 note · 1 rule row</span>
+    <button class="hs-btn hs-btn--quiet hs-btn--sm" type="button">Clear</button>
+  </div>
+
+  <div class="hs-strip hs-strip--hold is-linked" aria-current="true">
+    <div class="hs-strip__action">Hold<small>until 14:20</small></div>
+    <div class="hs-strip__cell"><span class="hs-label">Flight</span><span class="hs-strip__flight">AA1234</span></div>
+    <div class="hs-strip__cell"><span class="hs-label">Gate</span><span class="hs-val hs-val--synthetic" style="align-self:flex-start">B12 → R4</span></div>
+    <div class="hs-strip__cell"><span class="hs-label">Departure</span><span class="hs-val">14:05 → 14:31</span><span class="hs-strip__delta">+26 min</span></div>
+    <div class="hs-strip__cell"><span class="hs-label">Arrival</span><span class="hs-val">17:10 → 17:36</span><span class="hs-strip__delta">+26 min</span></div>
+    <div class="hs-strip__cell"><span class="hs-label">Taxi</span><span class="hs-val">9 min</span></div>
+    <div class="hs-strip__cell"><span class="hs-label">Fuel</span><span class="hs-val hs-val--estimate" style="align-self:flex-start">90 kg</span></div>
+  </div>
+
+  <div class="hs-strip">
+    <div class="hs-strip__action">Push<small>slot 1</small></div>
+    <div class="hs-strip__cell"><span class="hs-label">Flight</span><span class="hs-strip__flight">DL455</span></div>
+    <div class="hs-strip__cell"><span class="hs-label">Gate</span><span class="hs-val hs-val--synthetic" style="align-self:flex-start">A7</span></div>
+    <div class="hs-strip__cell"><span class="hs-label">Departure</span><span class="hs-val">14:02 → 14:08</span><span class="hs-strip__delta">+6 min</span></div>
+    <div class="hs-strip__cell"><span class="hs-label">Arrival</span><span class="hs-val">16:41 → 16:47</span><span class="hs-strip__delta">+6 min</span></div>
+    <div class="hs-strip__cell"><span class="hs-label">Taxi</span><span class="hs-val">14 min</span></div>
+    <div class="hs-strip__cell"><span class="hs-label">Fuel</span><span class="hs-val hs-val--estimate" style="align-self:flex-start">140 kg</span></div>
+  </div>
+
+  <article class="hs-bubble hs-bubble--tower is-linked">
+    <header class="hs-bubble__head">
+      <span class="hs-agent hs-agent--tower"><span class="hs-agent__glyph" aria-hidden="true">T</span><span class="hs-agent__name">Tower</span></span>
+      <span class="hs-chip hs-chip--tower">PROPOSE</span>
+      <span class="hs-bubble__meta">R1-TOWER-01</span>
+    </header>
+    <p class="hs-bubble__text">Release DL455 first, then hold AA1234 at the gate until 14:20.</p>
+  </article>
+
+  <article class="hs-bubble hs-bubble--pilot">
+    <header class="hs-bubble__head">
+      <span class="hs-agent hs-agent--pilot"><span class="hs-agent__glyph" aria-hidden="true">P</span><span class="hs-agent__name">Pilot</span></span>
+      <span class="hs-chip hs-chip--pilot">COUNTER</span>
+      <span class="hs-bubble__meta">R1-PILOT-01</span>
+    </header>
+    <p class="hs-bubble__text">Keep DL455 first: 20 minutes of duty left (N2).</p>
+  </article>
+
+  <article class="hs-bubble hs-bubble--ground is-linked">
+    <header class="hs-bubble__head">
+      <span class="hs-agent hs-agent--ground"><span class="hs-agent__glyph" aria-hidden="true">G</span><span class="hs-agent__name">Ground</span></span>
+      <span class="hs-chip hs-chip--ground">COUNTER</span>
+      <span class="hs-bubble__meta">R1-GROUND-01</span>
+    </header>
+    <p class="hs-bubble__text">B12 has no ground power. Move AA1234 to R4 and hold it there.</p>
+    <footer class="hs-bubble__foot"><span class="hs-chip is-linked">N1</span></footer>
+  </article>
+
+  <article class="hs-note is-linked">
+    <header class="hs-note__head"><span class="hs-note__id">N1</span><span class="hs-prov hs-prov--synthetic">Made-up note</span><span class="hs-outcome hs-outcome--accepted">✓ Accepted</span></header>
+    <p class="hs-note__text">GPU unserviceable at B12 — no engines-off hold possible there.</p>
+  </article>
+
+  <div class="hs-table-wrap">
+    <table class="hs-table" style="min-width:0">
+      <thead><tr><th>Rule</th><th>Covers</th><th>Result</th></tr></thead>
+      <tbody>
+        <tr><td class="hs-table__id">WAKE-01</td><td class="hs-caption">L1, L2</td><td><span class="hs-rule"><span class="hs-rule__id">WAKE-01</span><span class="hs-rule__state">✓ PASS</span></span></td></tr>
+        <tr class="is-linked"><td class="hs-table__id">GATE-02</td><td class="hs-caption">L3</td><td><span class="hs-rule"><span class="hs-rule__id">GATE-02</span><span class="hs-rule__state">✓ PASS</span></span></td></tr>
+        <tr><td class="hs-table__id">DUTY-01</td><td class="hs-caption">L1</td><td><span class="hs-rule"><span class="hs-rule__id">DUTY-01</span><span class="hs-rule__state">✓ PASS</span></span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>

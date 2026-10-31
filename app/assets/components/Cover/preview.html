@@ -1,0 +1,31 @@
+<!-- @dsCard height=288 -->
+<div style="position:relative;width:960px;height:288px;background:var(--surface-100);overflow:hidden">
+  <!--
+    Derivation
+    blocks: hold 260x288 (tall slab), ink 216x120, tower 106x164, pilot 106x80, ground 106x80; 4px gaps (space-1), corners radius-md.
+    arrangement: one tall yellow slab with a stack of satellites bleeding off the right edge.
+    pattern: literal motif, the airport hold-short marking (two solid, two dashed lines), cut out of the ink block in the page ground colour, because HoldShort is named after that line on the taxiway.
+    steps and radii: space-1 gaps, 6px rules on a 14px pitch, 24px dashes with 12px gaps, radius-md corners.
+  -->
+  <svg width="960" height="288" viewBox="0 0 960 288" xmlns="http://www.w3.org/2000/svg" style="position:absolute;left:0;top:0" aria-hidden="true">
+    <style>
+      .hold{fill:var(--hold)} .ink{fill:var(--ink)} .tower{fill:var(--tower)} .pilot{fill:var(--pilot)} .ground{fill:var(--ground)} .cut{fill:var(--surface-100)}
+      .blk{rx:var(--radius-md);ry:var(--radius-md)}
+    </style>
+    <rect class="blk hold" x="480" y="0" width="260" height="288"/>
+    <rect class="blk ink" x="744" y="0" width="216" height="120"/>
+    <rect class="blk tower" x="744" y="124" width="106" height="164"/>
+    <rect class="blk pilot" x="854" y="124" width="106" height="80"/>
+    <rect class="blk ground" x="854" y="208" width="106" height="80"/>
+    <rect class="cut" x="768" y="22" width="168" height="6"/>
+    <rect class="cut" x="768" y="36" width="168" height="6"/>
+    <g class="cut">
+      <rect x="768" y="62" width="24" height="6"/><rect x="804" y="62" width="24" height="6"/><rect x="840" y="62" width="24" height="6"/><rect x="876" y="62" width="24" height="6"/><rect x="912" y="62" width="24" height="6"/>
+      <rect x="768" y="76" width="24" height="6"/><rect x="804" y="76" width="24" height="6"/><rect x="840" y="76" width="24" height="6"/><rect x="876" y="76" width="24" height="6"/><rect x="912" y="76" width="24" height="6"/>
+    </g>
+  </svg>
+  <div style="position:absolute;left:40px;bottom:36px;width:400px">
+    <div style="font-family:var(--font-display);font-weight:700;font-size:80px;line-height:76px;color:var(--ink)">HoldShort</div>
+    <div style="margin-top:12px;font-family:var(--font-sans);font-size:14px;line-height:20px;color:var(--ink-muted)">Engines off, queue on time.</div>
+  </div>
+</div>

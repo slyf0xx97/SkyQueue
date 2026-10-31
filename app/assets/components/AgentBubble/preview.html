@@ -1,0 +1,45 @@
+<!-- @dsCard group="Agents" height=520 subtitle="One negotiation round; example messages" -->
+<div class="hs hs-stack">
+  <p class="hs-round"><span class="hs-round__dot">1</span><span class="hs-label">Round 1 · example messages</span></p>
+
+  <article class="hs-bubble hs-bubble--tower">
+    <header class="hs-bubble__head">
+      <span class="hs-agent hs-agent--tower"><span class="hs-agent__glyph" aria-hidden="true">T</span><span class="hs-agent__name">Tower</span></span>
+      <span class="hs-chip hs-chip--tower">PROPOSE</span>
+      <span class="hs-bubble__meta">R1-TOWER-01</span>
+    </header>
+    <p class="hs-bubble__text">Departure rate is cut to 8 per 15 minutes. I will release DL455 first, then UA567, then hold AA1234 at the gate until 14:20.</p>
+    <footer class="hs-bubble__foot">
+      <span class="hs-rule"><span class="hs-rule__id">WAKE-01</span><span class="hs-rule__state">✓ PASS</span></span>
+      <span class="hs-rule"><span class="hs-rule__id">RATE-01</span><span class="hs-rule__state">✓ PASS</span></span>
+    </footer>
+  </article>
+
+  <article class="hs-bubble hs-bubble--pilot">
+    <header class="hs-bubble__head">
+      <span class="hs-agent hs-agent--pilot"><span class="hs-agent__glyph" aria-hidden="true">P</span><span class="hs-agent__name">Pilot</span></span>
+      <span class="hs-chip hs-chip--pilot">COUNTER</span>
+      <span class="hs-bubble__meta">R1-PILOT-01</span>
+    </header>
+    <p class="hs-bubble__text">Note N2 says DL455 has 20 minutes of duty left. Keep it first. I accept the rest.</p>
+    <footer class="hs-bubble__foot">
+      <span class="hs-chip">N2</span>
+      <span class="hs-rule"><span class="hs-rule__id">DUTY-01</span><span class="hs-rule__state">✓ PASS</span></span>
+      <span class="hs-outcome hs-outcome--differ">≠ differs from reader on N3: urgency</span>
+    </footer>
+  </article>
+
+  <article class="hs-bubble hs-bubble--ground">
+    <header class="hs-bubble__head">
+      <span class="hs-agent hs-agent--ground"><span class="hs-agent__glyph" aria-hidden="true">G</span><span class="hs-agent__name">Ground</span></span>
+      <span class="hs-chip hs-chip--ground">COUNTER</span>
+      <span class="hs-bubble__meta">R1-GROUND-01</span>
+    </header>
+    <p class="hs-bubble__text">Note N1: gate B12 has no ground power, so AA1234 cannot hold there with engines off. I can move it to R4.</p>
+    <footer class="hs-bubble__foot">
+      <span class="hs-chip">N1</span>
+      <span class="hs-rule hs-rule--fail"><span class="hs-rule__id">GATE-02</span><span class="hs-rule__state">✕ FAIL</span></span>
+      <span class="hs-caption">Tower's plan, blocked before it reached you.</span>
+    </footer>
+  </article>
+</div>

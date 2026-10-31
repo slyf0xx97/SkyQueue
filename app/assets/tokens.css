@@ -1,0 +1,96 @@
+/* HoldShort design tokens, generated from tokens.json. Load before components/bundle.css. */
+@font-face { font-family: 'Barlow Condensed'; src: url('fonts/BarlowCondensed-500.woff2') format('woff2'); font-weight: 500; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Barlow Condensed'; src: url('fonts/BarlowCondensed-600.woff2') format('woff2'); font-weight: 600; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Barlow Condensed'; src: url('fonts/BarlowCondensed-700.woff2') format('woff2'); font-weight: 700; font-style: normal; font-display: swap; }
+@font-face { font-family: 'IBM Plex Sans'; src: url('fonts/IBMPlexSans-400.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: 'IBM Plex Sans'; src: url('fonts/IBMPlexSans-500.woff2') format('woff2'); font-weight: 500; font-style: normal; font-display: swap; }
+@font-face { font-family: 'IBM Plex Sans'; src: url('fonts/IBMPlexSans-600.woff2') format('woff2'); font-weight: 600; font-style: normal; font-display: swap; }
+@font-face { font-family: 'IBM Plex Mono'; src: url('fonts/IBMPlexMono-400.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: 'IBM Plex Mono'; src: url('fonts/IBMPlexMono-500.woff2') format('woff2'); font-weight: 500; font-style: normal; font-display: swap; }
+
+:root {
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 8px;
+  --radius-pill: 999px;
+  --size-control-sm: 28px;
+  --size-control-md: 36px;
+  --size-control-lg: 44px;
+  --size-strip: 52px;
+  --font-display: "Barlow Condensed", "Arial Narrow", sans-serif;
+  --font-sans: "IBM Plex Sans", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+  --surface-100: #e9edf1;
+  --surface-200: #f6f8fa;
+  --surface-300: #ffffff;
+  --line: #c3ccd6;
+  --line-strong: #7c8896;
+  --ink: #0e1a28;
+  --ink-muted: #46556a;
+  --on-ink: #f6f8fa;
+  --hold: #ffc400;
+  --on-hold: #1f1600;
+  --hold-tint: #fff1c2;
+  --hold-ink: #5c4300;
+  --tower: #1f4fbf;
+  --tower-tint: #e1e9fb;
+  --pilot: #6a3fc0;
+  --pilot-tint: #ece5fa;
+  --ground: #a83f05;
+  --ground-tint: #fbe6d8;
+  --on-role: #ffffff;
+  --pass: #0f6b4f;
+  --pass-tint: #ddf3ea;
+  --fail: #a91f18;
+  --fail-tint: #fbe4e1;
+  --focus: #0e1a28;
+  --shadow-raised: 0 1px 2px rgba(14,26,40,0.14), 0 6px 16px rgba(14,26,40,0.10);
+  --display-xl-size: 72px; --display-xl-line: 68px; --display-xl-weight: 700;
+  --display-lg-size: 40px; --display-lg-line: 42px; --display-lg-weight: 600;
+  --heading-size: 24px; --heading-line: 28px; --heading-weight: 600;
+  --label-size: 13px; --label-line: 16px; --label-weight: 600;
+  --body-lg-size: 16px; --body-lg-line: 24px; --body-lg-weight: 400;
+  --body-size: 14px; --body-line: 21px; --body-weight: 400;
+  --body-strong-size: 14px; --body-strong-line: 21px; --body-strong-weight: 600;
+  --caption-size: 12px; --caption-line: 18px; --caption-weight: 400;
+  --data-lg-size: 20px; --data-lg-line: 24px; --data-lg-weight: 500;
+  --data-size: 14px; --data-line: 20px; --data-weight: 500;
+  --data-sm-size: 12px; --data-sm-line: 16px; --data-sm-weight: 500;
+  color-scheme: light;
+}
+
+[data-theme="dark"] {
+  --surface-100: #0b131c;
+  --surface-200: #121d29;
+  --surface-300: #1a2837;
+  --line: #2c3d50;
+  --line-strong: #6b7f95;
+  --ink: #e8eef4;
+  --ink-muted: #9fb0c2;
+  --on-ink: #0b131c;
+  --hold: #ffc400;
+  --on-hold: #1f1600;
+  --hold-tint: #3a2e06;
+  --hold-ink: #ffd65c;
+  --tower: #7fa2ff;
+  --tower-tint: #17274d;
+  --pilot: #b79cff;
+  --pilot-tint: #2a1f4d;
+  --ground: #ff9a5c;
+  --ground-tint: #40230f;
+  --on-role: #0b131c;
+  --pass: #4fd1a0;
+  --pass-tint: #0f2e27;
+  --fail: #ff8a80;
+  --fail-tint: #3a1715;
+  --focus: #ffd65c;
+  --shadow-raised: 0 1px 2px rgba(0,0,0,0.6), 0 6px 16px rgba(0,0,0,0.5);
+  color-scheme: dark;
+}

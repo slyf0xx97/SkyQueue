@@ -1,0 +1,22 @@
+<!-- @dsCard group="Notes" height=330 subtitle="Five validator outcomes: mark, word and outline" -->
+<div class="hs hs-stack">
+  <div class="hs-row">
+    <span class="hs-outcome hs-outcome--accepted">✓ Accepted</span>
+    <span class="hs-outcome hs-outcome--single">✓ 1 of 2 readers</span>
+    <span class="hs-outcome hs-outcome--ambiguous">? Ambiguous</span>
+    <span class="hs-outcome hs-outcome--differ">≠ Readers differ</span>
+    <span class="hs-outcome hs-outcome--flagged">✕ Flagged</span>
+  </div>
+  <div class="hs-table-wrap">
+    <table class="hs-table" style="min-width:0">
+      <thead><tr><th>Outcome</th><th>What happens to the reading</th></tr></thead>
+      <tbody>
+        <tr><td><span class="hs-outcome hs-outcome--accepted">✓ Accepted</span></td><td>Goes to the agents, the safety rules and the backup plan.</td></tr>
+        <tr><td><span class="hs-outcome hs-outcome--single">✓ 1 of 2 readers</span></td><td>Accepted if it passes the checks; marked for you.</td></tr>
+        <tr><td><span class="hs-outcome hs-outcome--ambiguous">? Ambiguous</span></td><td>Never a rule. Shown to you.</td></tr>
+        <tr><td><span class="hs-outcome hs-outcome--differ">≠ Readers differ</span></td><td>Each passing reading is accepted; the mismatch is logged and counted.</td></tr>
+        <tr><td><span class="hs-outcome hs-outcome--flagged">✕ Flagged</span></td><td>Never a rule. Logged as an injection attempt.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>

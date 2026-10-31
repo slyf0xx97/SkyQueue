@@ -1,0 +1,52 @@
+<!-- @dsCard group="Data" height=700 subtitle="One row per flight: action, times, taxi, fuel, banner and trace footer; example data" -->
+<div class="hs hs-stack">
+  <p class="hs-row" style="margin:0"><span class="hs-label">Queue after plan · example data</span><span class="hs-prov">Real times</span><span class="hs-prov hs-prov--synthetic">Made-up gates</span><span class="hs-prov hs-prov--estimate">Estimated fuel</span></p>
+
+  <div class="hs-strip">
+    <div class="hs-strip__action">Push<small>slot 1</small></div>
+    <div class="hs-strip__cell"><span class="hs-label">Flight</span><span class="hs-strip__flight">DL455</span></div>
+    <div class="hs-strip__cell"><span class="hs-label">Gate</span><span class="hs-val hs-val--synthetic" style="align-self:flex-start">A7</span></div>
+    <div class="hs-strip__cell"><span class="hs-label">Departure</span><span class="hs-val">14:02 → 14:08</span><span class="hs-strip__delta">+6 min</span></div>
+    <div class="hs-strip__cell"><span class="hs-label">Arrival</span><span class="hs-val">16:41 → 16:47</span><span class="hs-strip__delta">+6 min</span></div>
+    <div class="hs-strip__cell"><span class="hs-label">Taxi</span><span class="hs-val">14 min</span></div>
+    <div class="hs-strip__cell"><span class="hs-label">Fuel</span><span class="hs-val hs-val--estimate" style="align-self:flex-start">140 kg</span></div>
+    <div class="hs-strip__banner">! 20 min of crew duty left <span class="hs-chip">N2</span></div>
+    <div class="hs-strip__foot"><span class="hs-strip__line">L1</span><span class="hs-strip__checks">✓ 5 / 5 rules</span><button class="hs-btn hs-btn--quiet hs-btn--sm" type="button">Why this line</button></div>
+  </div>
+
+  <div class="hs-strip hs-strip--hold">
+    <div class="hs-strip__action">Hold<small>until 14:20</small></div>
+    <div class="hs-strip__cell"><span class="hs-label">Flight</span><span class="hs-strip__flight">AA1234</span></div>
+    <div class="hs-strip__cell"><span class="hs-label">Gate</span><span class="hs-val hs-val--synthetic" style="align-self:flex-start">R4</span></div>
+    <div class="hs-strip__cell"><span class="hs-label">Departure</span><span class="hs-val">14:05 → 14:31</span><span class="hs-strip__delta">+26 min</span></div>
+    <div class="hs-strip__cell"><span class="hs-label">Arrival</span><span class="hs-val">17:10 → 17:36</span><span class="hs-strip__delta">+26 min</span></div>
+    <div class="hs-strip__cell"><span class="hs-label">Taxi</span><span class="hs-val">9 min</span></div>
+    <div class="hs-strip__cell"><span class="hs-label">Fuel</span><span class="hs-val hs-val--estimate" style="align-self:flex-start">90 kg</span></div>
+    <div class="hs-strip__banner">! No ground power at B12, so no engines-off hold there <span class="hs-chip">N1</span></div>
+    <div class="hs-strip__foot"><span class="hs-strip__line">L3</span><span class="hs-strip__checks">✓ 4 / 4 rules</span><button class="hs-btn hs-btn--quiet hs-btn--sm" type="button">Why this line</button></div>
+  </div>
+
+  <div class="hs-strip hs-strip--move">
+    <div class="hs-strip__action">Move<small>→ R4</small></div>
+    <div class="hs-strip__cell"><span class="hs-label">Flight</span><span class="hs-strip__flight">UA567</span></div>
+    <div class="hs-strip__cell"><span class="hs-label">Gate</span><span class="hs-val hs-val--synthetic" style="align-self:flex-start">B12 → R4</span></div>
+    <div class="hs-strip__cell"><span class="hs-label">Departure</span><span class="hs-val">14:10 → 14:18</span><span class="hs-strip__delta">+8 min</span></div>
+    <div class="hs-strip__cell"><span class="hs-label">Arrival</span><span class="hs-val">16:55 → 17:03</span><span class="hs-strip__delta">+8 min</span></div>
+    <div class="hs-strip__cell"><span class="hs-label">Taxi</span><span class="hs-val">11 min</span></div>
+    <div class="hs-strip__cell"><span class="hs-label">Fuel</span><span class="hs-val hs-val--estimate" style="align-self:flex-start">110 kg</span></div>
+    <div class="hs-strip__banner">! Priority connection: medical, wheelchair assist booked <span class="hs-chip">N3</span></div>
+    <div class="hs-strip__foot"><span class="hs-strip__line">L2</span><span class="hs-strip__checks">✓ 5 / 5 rules</span><button class="hs-btn hs-btn--quiet hs-btn--sm" type="button">Why this line</button></div>
+  </div>
+
+  <div class="hs-strip">
+    <div class="hs-strip__action">Push<small>slot 4</small></div>
+    <div class="hs-strip__cell"><span class="hs-label">Flight</span><span class="hs-strip__flight">AA100</span></div>
+    <div class="hs-strip__cell"><span class="hs-label">Gate</span><span class="hs-val hs-val--synthetic" style="align-self:flex-start">C3</span></div>
+    <div class="hs-strip__cell"><span class="hs-label">Departure</span><span class="hs-val">14:15 → 14:24</span><span class="hs-strip__delta">+9 min</span></div>
+    <div class="hs-strip__cell"><span class="hs-label">Arrival</span><span class="hs-val">17:02 → 17:11</span><span class="hs-strip__delta">+9 min</span></div>
+    <div class="hs-strip__cell"><span class="hs-label">Taxi</span><span class="hs-val">12 min</span></div>
+    <div class="hs-strip__cell"><span class="hs-label">Fuel</span><span class="hs-val hs-val--estimate" style="align-self:flex-start">120 kg</span></div>
+    <div class="hs-strip__banner hs-strip__banner--ignored">✕ Ignored: this note asks to skip wake spacing, so no rule changed <span class="hs-chip">N5</span></div>
+    <div class="hs-strip__foot"><span class="hs-strip__line">L4</span><span class="hs-strip__checks">✓ 5 / 5 rules</span><button class="hs-btn hs-btn--quiet hs-btn--sm" type="button">Why this line</button></div>
+  </div>
+</div>

@@ -5,22 +5,24 @@ HoldShort is our Autonomous SG 2026 entry for Airbus Challenge #2. When weather 
 ## Read these first
 
 1. `docs/brief.md` is the source of truth. Its "Time-boxed build plan" section overrides anything older.
-2. `docs/prd.md` (v0.2) has the detailed requirements. Where it disagrees with the time-boxed plan, follow the plan. The v0.3 additions it doesn't include are listed below.
-
-v0.3 additions (traceability):
-- Code assigns a `line_id` to every plan line. COUNTER and ACCEPT messages refer to plan lines by `line_id`.
-- Each final plan line carries `proposed_in` (msg_id, or `BACKUP`), `agreed_by[]`, `notes_used[]`, `checks[]` (`{rule_id, pass, detail}`) and a provenance label per value (`real`, `synthetic`, `estimate`).
-- A `trace_links` SQLite table stores edges `(from_type, from_id, to_type, to_id)` between plan lines, messages, notes, rule checks and flights. The coordinator writes them, and the JSON export includes them.
-- The screen has "Why this line" on each plan line. It opens the proposing message, the agents that agreed, the notes used and the rule results, read from `trace_links`.
-- A validated note shows a banner on every flight it affects (for example "No ground power at B12, note N1"). An ignored injection note shows "Ignored".
-- Message types show as chips with a mark (✓ ACCEPT, ✕ REJECT), so colour isn't the only signal.
+2. `docs/prd.md` (v0.3) has the detailed requirements. Where it disagrees with the time-boxed plan, follow the plan.
+3. `docs/architecture-v3.md` explains the Jev note reader, the validator and the B2 baseline, with the Pydantic models for `NoteReading` and `ReadingDecision`.
+4. `docs/design-system/README.md` and `docs/streamlit.md` explain how the screen should look and how to use the design system in Streamlit.
 
 Overrides from the time-boxed plan:
 - The backup plan is a greedy rule in Python (first come first served, plus gate holds ranked by slack). Don't use OR-Tools or CP-SAT.
 - Evaluation is small: about 30 scenarios for calibration and for B0, B1 and B2, plus HoldShort on the 3 demo scenarios and a few more. Skip the 100 to 300 scenario batch and the sensitivity check.
 - Jev (note reader, via OpenRouter) and the Claude agents run only on the 3 demo scenarios, once, with replies cached and replayed.
-- Skip linked selection and character art. Use emoji for the three agents.
+- Skip linked selection and character art. Use the glyph tiles from the AgentTag component for the three agents.
 - The backup plan takes validated note constraints. B2 is the solver plus the same validated notes, with no negotiation.
+
+## Design system
+
+Everything for the screen is in `app/assets/`:
+- `tokens.css` (load first, generated from `tokens.json`) and `components/bundle.css`.
+- `fonts/`: Barlow Condensed, IBM Plex Sans and IBM Plex Mono.
+- `components/<Name>/README.md` and `preview.html` for each component: AgentTag, AgentBubble, RoundTimeline, ReaderTag, OpsNote, ReadingCompare, ValidatorOutcome, RuleBadge, RuleTable, Provenance, FlightStrip, LinkedSelection, TraceChain, PlanCard, Button, ResultsBars.
+- `Logo/holdshort-mark.svg` for the page icon.
 
 ## Deadline
 
@@ -39,7 +41,7 @@ We aim to submit at 15:20 SGT on 31 Oct 2026, and the hard deadline is about 15:
 ## Rules for this repo
 
 - Commits are authored by the team only. Don't add Co-Authored-By lines or any AI attribution to commits or PRs.
-- Never commit `data/flights.csv`, API keys or `.env`. Keys go in `.env`: `ANTHROPIC_API_KEY` and `OPENROUTER_API_KEY`.
+- Never commit `data/flights.csv`, API keys or `.env`. Copy `.env.example` to `.env` and fill in the keys.
 - AI never decides legality or does arithmetic. Rules, timing and the backup plan are plain Python.
 - Agents never invent IDs. Code assigns `msg_id`, `line_id` and `note_id`.
 - Every made-up value is labelled `synthetic` in data, UI and exports.

@@ -2,14 +2,16 @@
 
 *Engines off, queue on time.*
 
-Autonomous SG 2026 · Airbus Challenge #2 · v0.2 · 31 Oct 2026
+Autonomous SG 2026 · Airbus Challenge #2 · v0.3 · 31 Oct 2026
 Full background: `holdshort-brief.md` in the project knowledge base.
+
+**v0.3 changes:** trace links stored by code (plan line ↔ message ↔ note ↔ rule check); linked selection, "Why this line" and note banners on the supervisor screen; code-assigned IDs; design system adopted for the app; interface references added.
 
 **v0.2 changes:** revised arrival times + gate reassignment; free-text ops notes; calibration and same-calculator baselines; positioned against NASA ATD-2 / FAA TFDM metering; Streamlit instead of FastAPI + React; reply cache and cheaper batch model; configurable round limit; stated data limits.
 
 ## 1. Summary
 
-HoldShort helps a tower supervisor clear a weather-delayed departure queue. Three AI agents (Tower, Pilot, Ground) read the situation, including free-text ops notes, and negotiate pushback order, engines-off gate holds, gate moves and runway order in at most 3 rounds. Plain code checks every plan against safety rules. If the agents don't agree, a solver makes a backup plan. A human approves every final plan, which includes revised departure and arrival times. Everything is logged.
+HoldShort helps a tower supervisor clear a weather-delayed departure queue. Three AI agents (Tower, Pilot, Ground) read the situation, including free-text ops notes, and negotiate pushback order, engines-off gate holds, gate moves and runway order in at most 3 rounds. Plain code checks every plan against safety rules. If the agents don't agree, a solver makes a backup plan. A human approves every final plan, which includes revised departure and arrival times. Everything is logged, and every line of the final plan can be traced back to the messages, notes and rule checks behind it.
 
 ## 2. Problem
 
@@ -18,6 +20,19 @@ During weather disruptions, aircraft push back in order and wait in long taxi qu
 ## 3. Prior work and our addition
 
 Departure metering (gate holds timed by an algorithm) is proven: NASA's ATD-2 trial at Charlotte reported over 1M gallons of fuel saved in its first four years, and the FAA is rolling out surface metering in TFDM. Metering decides *when* aircraft leave the gate. It does not negotiate trade-offs between organisations or read unstructured ops information. HoldShort adds that. Our solver without notes (B1) stands in for metering and is the baseline to beat.
+
+### Interface references
+
+We ranked nine related interfaces and borrow from the top three. The pictures we looked at were schematics drawn from each source's text, not screenshots; we link the sources.
+
+| Rank | Interface | What we borrow |
+|---|---|---|
+| 1 | ATD-2 tower display | Linked selection: pick a flight and it highlights everywhere (F9.9) |
+| 2 | AgentCoord | Messages marked by type; a line from each plan line back to the message that proposed it (F9.10, F9.11) |
+| 3 | FAA electronic flight strips | Memory-aid banners, for example a note that a gate has no ground power (F9.12) |
+| 4 | ATD-2 ramp console | Hold countdown on held strips (F9.13, optional) |
+
+The ATD-2 human-factors study is small (4 to 13 survey responses per condition), so we cite it as context, not proof.
 
 ## 4. Users
 
@@ -36,6 +51,7 @@ Departure metering (gate holds timed by an algorithm) is proven: NASA's ATD-2 tr
 - G3. Fewer excess taxi-out minutes than B0 (today) and B1 (metering-style solver).
 - G4. Every decision traceable to messages, notes, rule checks and data source.
 - G5. Every plan states revised departure and arrival times per flight.
+- G6. From any plan line, the supervisor reaches the proposing message, the agreeing agents, the notes used and the rule results in one click, with no recomputation in the UI.
 
 **Non-goals**
 - Arrivals sequencing, en-route rerouting, multi-airport networks.
@@ -52,6 +68,8 @@ Departure metering (gate holds timed by an algorithm) is proven: NASA's ATD-2 tr
 6. As a supervisor, I approve or reject the plan; nothing counts until I do.
 7. As an auditor, I export the full log as JSON.
 8. As a judge, I see results across many scenarios versus B0 and B1, including failures.
+9. As a supervisor, I click one flight and see its strip, its messages, the notes about it and its rule checks highlighted together.
+10. As a supervisor, I ask "why this line?" on any plan line and see what produced it.
 
 ## 7. Functional requirements
 
@@ -68,6 +86,7 @@ Departure metering (gate holds timed by an algorithm) is proven: NASA's ATD-2 tr
 - F2.2 Note types: broken ground power, crew duty remaining, priority connection, turbulence report, gate unavailable, ambiguous note, prompt-injection note.
 - F2.3 Each note stores its hidden ground-truth constraint for evaluation (never shown to agents).
 - F2.4 30 notes hand-written and hand-labelled before any prompt tuning.
+- F2.5 Each note has a code-assigned `note_id` (`N1`, `N2`, …) and the flights and gates it names, so the UI can show it on every affected strip.
 
 ### F3. Timing calculator (no AI)
 - F3.1 Given pushback order, gate holds/moves and runway order, compute per flight: pushback, taxi minutes, wheels-off, fuel used, revised departure delay, **revised arrival time** (wheels-off + scheduled air time + taxi-in).
@@ -86,6 +105,10 @@ Departure metering (gate holds timed by an algorithm) is proven: NASA's ATD-2 tr
 
 ### F5. Message schema
 `msg_id`, `round`, `from` (TOWER|PILOT|GROUND), `type` (PROPOSE|COUNTER|ACCEPT|REJECT), `plan[]` (flight, action PUSH|GATE_HOLD|REASSIGN_GATE, plus `until` / `runway_slot` / `gate`), `constraints_from_notes[]` (type, target, note_id), `constraints_cited[]`, `rationale` (≤ 300 chars), `timestamp`.
+
+- F5.1 **Code assigns IDs.** The coordinator sets `msg_id` (for example `R2-TOWER-01`) and a `line_id` for every plan line. Agents never invent either. Agents may only cite `note_id` values that were in their input; code rejects any other.
+- F5.2 A COUNTER or ACCEPT refers to the plan lines it changes or agrees with by `line_id`. The coordinator records which message first proposed each line and which agents accepted it.
+- F5.3 Each plan line in an agreed or backup plan carries: `line_id`, `proposed_in` (msg_id; `BACKUP` for solver lines), `agreed_by[]`, `notes_used[]` (note_ids), `checks[]` (`{rule_id, pass, detail}` for every rule run against that line) and a `provenance` label per value (`real`, `synthetic`, `estimate`).
 
 ### F6. Negotiation coordinator
 - F6.1 Round 1: Tower proposes. Pilot and Ground ACCEPT or COUNTER.
@@ -111,6 +134,7 @@ Departure metering (gate holds timed by an algorithm) is proven: NASA's ATD-2 tr
 
 - Each check returns `{rule_id, pass, detail}`. All values come from `config.yaml`.
 - Constraints extracted from notes are validated (type, target exists) and then applied as extra hard rules.
+- F7.1 Each check also reports which plan lines it covered, so results can be attached to `checks[]` on those lines (F5.3).
 
 ### F8. Backup plan (no AI)
 - F8.1 OR-Tools CP-SAT over all hard rules, minimising weighted excess taxi minutes + missed connections + overtime. Greedy rule-based version if time runs short.
@@ -127,11 +151,19 @@ Departure metering (gate holds timed by an algorithm) is proven: NASA's ATD-2 tr
 - F9.6 Approve / Reject buttons; decision written to the log.
 - F9.7 Scenario picker (airport, date, trigger row).
 - F9.8 Results page: tables and charts from the latest evaluation run.
+- F9.9 **Linked selection.** Selecting a flight highlights its strip, its plan line, every message that mentions it, every note that names it and every rule row that covered it. The screen reads the stored trace links (F10.4); it computes nothing.
+- F9.10 **Message type marks.** Every message shows its type (PROPOSE, COUNTER, ACCEPT, REJECT) as a chip with a mark (✓ for ACCEPT, ✕ for REJECT), not by colour alone.
+- F9.11 **Why this line.** Each plan line has a "Why this line" action. It opens the proposing message, the agents that agreed, the notes used and the rule results for that line, in that order.
+- F9.12 **Note banners.** A validated note constraint raises a banner on every strip it affects (for example "No ground power at B12, note N1"). An ignored injection note shows "Ignored" and is logged.
+- F9.13 (Could, before the feature freeze only) Held strips show the hold-until time as a countdown.
+- F9.14 The screen uses the HoldShort design system (`tokens.css`, `components/bundle.css`, fonts) from `app/assets/`. Real, made-up and estimated values use the Provenance styles.
 
 ### F10. Log and cache
 - F10.1 SQLite: every message, note reading, rule check, plan and decision with timestamps.
 - F10.2 Export a run as JSON.
 - F10.3 Cache AI replies keyed by model + prompt hash, so reruns are identical and cheap.
+- F10.4 **Trace links.** A `trace_links` table stores edges `(from_type, from_id, to_type, to_id)` between plan lines, messages, notes, rule checks and flights, written by the coordinator when each message and check is recorded. The UI's linked selection and "Why this line" (F9.9, F9.11) query this table.
+- F10.5 The JSON export includes the trace links, so an auditor can follow the same paths offline.
 
 ### F11. Evaluation
 - F11.1 Batch-run 100–300 scenarios across several airports/months, fixed seed, parallel calls; ~20-scenario dev set kept separate.
@@ -139,6 +171,7 @@ Departure metering (gate holds timed by an algorithm) is proven: NASA's ATD-2 tr
 - F11.3 Report: calibration error; excess taxi minutes; fuel/CO₂ (estimated); delay; missed connections; hard-rule breaks in approved plans; proposals blocked; % agreed by round 2 / 3 / backup; note-reading precision/recall; injection notes refused; latency. Medians with spread, paired per scenario.
 - F11.4 Save five failure cases: deadlock → backup; unsafe proposal blocked; worse than B1; misread note; bad input declined.
 - F11.5 Sensitivity check on burn rate and departure rate.
+- F11.6 Trace completeness: in approved plans, 100% of plan lines have a proposing message, `agreed_by`, `checks[]` and provenance labels. Reported as a metric.
 
 ## 8. Non-functional requirements
 
@@ -149,9 +182,10 @@ Departure metering (gate holds timed by an algorithm) is proven: NASA's ATD-2 tr
 | N3 | If the API is down: backup plan still runs; recorded demo run available |
 | N4 | No API keys in git; `.env` only |
 | N5 | `flights.csv` not committed |
-| N6 | Rules, calculator and note validation covered by pytest |
+| N6 | Rules, calculator, note validation and trace-link writes covered by pytest |
 | N7 | Commits authored by the team only, no AI co-author lines |
 | N8 | Batch evaluation fits the team's API budget (estimate cost before running) |
+| N9 | Selecting a flight updates the highlights in under 200 ms (reads stored links only) |
 
 ## 9. Tech stack
 
@@ -165,11 +199,11 @@ src/sim/         scenarios.py, notes.py, timing.py, calibrate.py
 src/agents/      tower.py, pilot.py, ground.py, prompts/, cache.py
 src/checker/     rules.py, config.yaml
 src/solver/      backup.py
-src/coordinator.py, src/log.py
-app/             streamlit_app.py, assets/ (character art)
+src/coordinator.py, src/log.py, src/trace.py
+app/             streamlit_app.py, assets/ (tokens.css, components/bundle.css, fonts/, character art)
 eval/            run_batch.py, baselines.py, notes_labelled.csv, results/
 tests/
-docs/            prd.md
+docs/            prd.md, streamlit.md
 ```
 
 ## 11. Acceptance criteria
@@ -185,6 +219,10 @@ docs/            prd.md
 - [ ] Calibration error and the B0 / B1 / HoldShort table are produced by script.
 - [ ] Five failure cases are saved and shown.
 - [ ] Every made-up value is labelled in the app and exports.
+- [ ] Every plan line in an approved plan has a proposing message, agreeing agents, notes used and rule results in the log.
+- [ ] Selecting a flight highlights its strip, messages, notes and rule rows from stored trace links.
+- [ ] "Why this line" opens the full chain for any plan line.
+- [ ] A validated note constraint shows a banner on every strip it affects.
 
 ## 12. Milestones (today)
 
@@ -192,8 +230,8 @@ docs/            prd.md
 |---|---|---|
 | M1 | Data + scenarios + timing calculator + calibration + B0 | Calibration error and B0 for 1 scenario |
 | M2 | Rules + backup solver (B1) + tests | pytest green, B1 runs |
-| M3 | Notes + agents + coordinator + cache + log | 3-round run in terminal |
-| M4 | Streamlit app | Run and approve in browser |
+| M3 | Notes + agents + coordinator + cache + log + trace links | 3-round run in terminal; trace links readable for every plan line |
+| M4 | Streamlit app with linked selection, "Why this line" and note banners | Run and approve in browser; the three interactions work |
 | M5 | Batch evaluation + failure cases | Results table generated |
 | M6 | Slides + 3-min recording | Submitted |
 
@@ -205,14 +243,19 @@ Feature freeze after M4.
 - One Pilot agent speaks for all airlines; real airlines compete.
 - Wake classes, fuel, gates, crew times and notes are made-up.
 - Timing calculator is simplified; its error is reported.
+- Interface references were studied from text descriptions and schematics, not screenshots.
 
 ## 14. Open questions
 
 - Simplified wake intervals and taxiway capacity values: agree and document.
-- Who draws the three original agent characters?
+- Who draws the three original agent characters? (Spec in the design system, `assets/Characters`.)
 - API budget for the batch run.
+- Brand font: the design system uses open-licence fonts (Barlow Condensed, IBM Plex). If the organisers supply licensed Airbus font files, we swap them in.
 
 ## Sources
 
 - NASA Spinoff, ATD-2 at Charlotte: https://spinoff.nasa.gov/node/11424
 - FAA TFDM Surface Metering: https://www.faa.gov/air_traffic/technology/tfdm/sm
+- FAA Electronic Flight Strips: https://www.faa.gov/air_traffic/technology/tfdm/efs
+- NASA ATD-2 Charlotte human-factors paper: https://ntrs.nasa.gov/api/citations/20205004241/downloads/Parke_CLT_HF_%20DASC_paper_final.pdf
+- AgentCoord: https://arxiv.org/html/2404.11943v1

@@ -7,3 +7,7 @@ node_modules/
 *.sqlite
 *.db
 cache/
+.pytest_cache/
+.DS_Store
+Thumbs.db
+.streamlit/secrets.toml

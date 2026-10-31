@@ -1,0 +1,20 @@
+<!-- @dsCard group="Safety" height=430 subtitle="Checker output for one proposal; example values" -->
+<div class="hs hs-stack">
+  <p class="hs-label" style="margin:0">Proposal R1-TOWER-01 · checked by code · example values</p>
+  <div class="hs-table-wrap">
+    <table class="hs-table">
+      <thead>
+        <tr><th>Rule</th><th>Owner</th><th>What it checks</th><th>Covers</th><th>Type</th><th>Result</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="hs-table__id">WAKE-01</td><td><span class="hs-label">Tower</span></td><td>Gap between departures by wake class</td><td class="hs-caption">L1, L2, L3</td><td class="hs-caption">Hard</td><td><span class="hs-rule"><span class="hs-rule__id">WAKE-01</span><span class="hs-rule__state">✓ PASS</span></span></td></tr>
+        <tr><td class="hs-table__id">RATE-01</td><td><span class="hs-label">Tower</span></td><td>Departures per 15 min within reduced rate</td><td class="hs-caption">L1, L2, L3</td><td class="hs-caption">Hard</td><td><span class="hs-rule"><span class="hs-rule__id">RATE-01</span><span class="hs-rule__state">✓ PASS</span></span></td></tr>
+        <tr><td class="hs-table__id">DUTY-01</td><td><span class="hs-label">Pilot</span></td><td>Wheels-off before crew duty ends</td><td class="hs-caption">L1</td><td class="hs-caption">Hard</td><td><span class="hs-rule"><span class="hs-rule__id">DUTY-01</span><span class="hs-rule__state">✓ PASS</span></span></td></tr>
+        <tr class="is-fail"><td class="hs-table__id">GATE-02</td><td><span class="hs-label">Ground</span></td><td>Engines-off hold only where there is ground power (from N1)
+          <span class="hs-table__detail">AA1234 held at B12, which has no ground power</span></td><td class="hs-caption">Hard</td><td><span class="hs-rule hs-rule--fail"><span class="hs-rule__id">GATE-02</span><span class="hs-rule__state">✕ FAIL</span></span></td></tr>
+        <tr><td class="hs-table__id">CONN-01</td><td><span class="hs-label">Pilot</span></td><td>Minimise missed connections</td><td class="hs-caption">L2</td><td class="hs-caption">Soft</td><td><span class="hs-rule hs-rule--soft"><span class="hs-rule__id">CONN-01</span><span class="hs-rule__state">! MISS</span></span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="hs-caption" style="margin:0">Blocked: this proposal went back to Tower with GATE-02. The other agents did not see it.</p>
+</div>

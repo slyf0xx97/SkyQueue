@@ -1,0 +1,65 @@
+<!-- @dsCard group="Trace" height=770 subtitle="Why this line: complete chain, and a broken one; example data" -->
+<div class="hs hs-stack" style="gap:32px">
+
+  <ol class="hs-chain" aria-label="Why this line: L3, AA1234 hold">
+    <li class="hs-chain__head" style="list-style:none">
+      <h3 class="hs-chain__title">Why this line · <span class="hs-mono">L3</span> AA1234 hold at R4 until 14:20</h3>
+      <span class="hs-outcome hs-outcome--accepted">✓ Trace complete</span>
+    </li>
+    <li class="hs-chain__step">
+      <span class="hs-chain__n">1</span>
+      <div class="hs-chain__body">
+        <span class="hs-chain__q">Proposed in</span>
+        <span class="hs-row" style="gap:8px"><span class="hs-agent hs-agent--ground"><span class="hs-agent__glyph" aria-hidden="true">G</span><span class="hs-agent__name">Ground</span></span><span class="hs-chip hs-chip--ground">COUNTER</span><span class="hs-chip">R1-GROUND-01</span></span>
+        <p class="hs-chain__quote">“B12 has no ground power. Move AA1234 to R4 and hold it there.”</p>
+      </div>
+    </li>
+    <li class="hs-chain__step">
+      <span class="hs-chain__n">2</span>
+      <div class="hs-chain__body">
+        <span class="hs-chain__q">Agreed by</span>
+        <span class="hs-row" style="gap:12px">
+          <span class="hs-agent hs-agent--tower"><span class="hs-agent__glyph" aria-hidden="true">T</span><span class="hs-agent__name">Tower</span></span><span class="hs-chip hs-chip--tower">✓ ACCEPT</span><span class="hs-chip">R2-TOWER-01</span>
+          <span class="hs-agent hs-agent--pilot"><span class="hs-agent__glyph" aria-hidden="true">P</span><span class="hs-agent__name">Pilot</span></span><span class="hs-chip hs-chip--pilot">✓ ACCEPT</span><span class="hs-chip">R2-PILOT-01</span>
+        </span>
+      </div>
+    </li>
+    <li class="hs-chain__step">
+      <span class="hs-chain__n">3</span>
+      <div class="hs-chain__body">
+        <span class="hs-chain__q">Notes used</span>
+        <span class="hs-row" style="gap:8px"><span class="hs-chip">N1</span><span class="hs-outcome hs-outcome--accepted">✓ Accepted</span><span class="hs-caption">Reader and Ground agree: no engines-off hold at B12.</span></span>
+      </div>
+    </li>
+    <li class="hs-chain__step">
+      <span class="hs-chain__n">4</span>
+      <div class="hs-chain__body">
+        <span class="hs-chain__q">Rules checked</span>
+        <span class="hs-row" style="gap:8px">
+          <span class="hs-rule"><span class="hs-rule__id">WAKE-01</span><span class="hs-rule__state">✓ PASS</span></span>
+          <span class="hs-rule"><span class="hs-rule__id">GATE-01</span><span class="hs-rule__state">✓ PASS</span></span>
+          <span class="hs-rule"><span class="hs-rule__id">GATE-02</span><span class="hs-rule__state">✓ PASS</span></span>
+          <span class="hs-rule"><span class="hs-rule__id">CREW-01</span><span class="hs-rule__state">✓ PASS</span></span>
+        </span>
+      </div>
+    </li>
+    <li class="hs-chain__step">
+      <span class="hs-chain__n">5</span>
+      <div class="hs-chain__body">
+        <span class="hs-chain__q">Values</span>
+        <span class="hs-row" style="gap:8px"><span class="hs-prov">Real times</span><span class="hs-prov hs-prov--synthetic">Made-up gate</span><span class="hs-prov hs-prov--estimate">Estimated fuel</span></span>
+      </div>
+    </li>
+  </ol>
+
+  <ol class="hs-chain" aria-label="Why this line: L5, broken trace">
+    <li class="hs-chain__head" style="list-style:none">
+      <h3 class="hs-chain__title">Why this line · <span class="hs-mono">L5</span> UA567 push, slot 3</h3>
+      <span class="hs-outcome hs-outcome--flagged">✕ Trace broken</span>
+    </li>
+    <li class="hs-chain__step hs-chain__step--missing">
+      <span class="hs-chain__n">1</span>
+      <div class="hs-chain__body">No proposing message recorded for this line. It cannot be approved.</div>
+    </li>
+  </ol>
+</div>

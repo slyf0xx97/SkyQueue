@@ -16,8 +16,8 @@ When weather backs up a departure queue, three independent AI agents (ATC, Pilot
 | `src/checker/` | Deterministic constraint checker (WAKE-01, RATE-01, FUEL-01, GATE-01, ...) |
 | `src/solver/` | Non-AI fallback solver (baseline B1) |
 | `eval/` | Batch evaluation vs baselines B0 (FCFS) and B1 |
-| `ui/` | Supervisor UI: agent characters, message thread, consensus log, approve |
-| `docs/` | Project brief |
+| `app/` | Streamlit supervisor screen; `app/assets/` holds the design system (tokens, components, fonts, logo) |
+| `docs/` | Brief (source of truth), PRD v0.3, architecture v3, design system guide, Streamlit guide |
 
 ## Rules of the build
 
