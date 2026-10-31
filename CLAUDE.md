@@ -4,17 +4,11 @@ SkyQueue is our Autonomous SG 2026 entry for Airbus Challenge #2. When weather b
 
 ## Read these first
 
-1. `docs/brief.md` is the source of truth. Its "Time-boxed build plan" section overrides anything older.
-2. `docs/prd.md` (v0.3) has the detailed requirements. Where it disagrees with the time-boxed plan, follow the plan.
-3. `docs/architecture-v3.md` explains the Jev note reader, the validator and the B2 baseline, with the Pydantic models for `NoteReading` and `ReadingDecision`.
-4. `docs/design-system/README.md` and `docs/streamlit.md` explain how the screen should look and how to use the design system in Streamlit.
+1. `docs/prd.md` says exactly what to build: requirements, data models, rules, acceptance criteria and schedule.
+2. `docs/brief.md` has the pitch, the evaluation story and the build plan. The live version with the architecture diagrams is linked at its top.
+3. `docs/design-system/README.md` and `docs/streamlit.md` explain how the screen should look and how to use the design system in Streamlit.
 
-Overrides from the time-boxed plan:
-- The backup plan is a greedy rule in Python (first come first served, plus gate holds ranked by slack). Don't use OR-Tools or CP-SAT.
-- Evaluation is small: about 30 scenarios for calibration and for B0, B1 and B2, plus SkyQueue on the 3 demo scenarios and a few more. Skip the 100 to 300 scenario batch and the sensitivity check.
-- Jev (note reader, via OpenRouter) and the Claude agents run only on the 3 demo scenarios, once, with replies cached and replayed.
-- Skip linked selection and character art. Use the glyph tiles from the AgentTag component for the three agents.
-- The backup plan takes validated note constraints. B2 is the solver plus the same validated notes, with no negotiation.
+The PRD and the brief agree. If anything still conflicts, the PRD wins.
 
 ## Design system
 

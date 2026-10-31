@@ -17,7 +17,7 @@ When weather backs up a departure queue, three independent AI agents (ATC, Pilot
 | `src/solver/` | Non-AI fallback solver (baseline B1) |
 | `eval/` | Batch evaluation vs baselines B0 (FCFS) and B1 |
 | `app/` | Streamlit supervisor screen; `app/assets/` holds the design system (tokens, components, fonts, logo) |
-| `docs/` | Brief (source of truth), PRD v0.3, architecture v3, design system guide, Streamlit guide |
+| `docs/` | Brief (pitch and plan), PRD (what to build), design system guide, Streamlit guide |
 
 ## Rules of the build
 
