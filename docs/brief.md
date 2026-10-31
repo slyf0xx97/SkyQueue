@@ -11,7 +11,7 @@ SkyQueue helps a tower supervisor clear a departure queue that a storm has backe
 | User | The tower supervisor who runs the departure queue at a busy US hub |
 | Data | 2015 US DOT flight delays, plus made-up gate, crew and fuel data that is labelled everywhere |
 | Stack | Python, Claude API, Pydantic, Streamlit, SQLite |
-| Code | github.com/slyf0xx97/taxi-out-negotiator, with the build spec in `docs/prd.md` |
+| Code | github.com/slyf0xx97/SkyQueue, with the build spec in `docs/prd.md` |
 | Submit | 15:20 SGT on 31 Oct 2026 |
 | Live brief | https://claude.ai/artifact/965TKTqRrFW6i5qqinx5Zj, with both diagrams |
 
