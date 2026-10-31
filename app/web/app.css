@@ -711,3 +711,11 @@ body { padding-top: 0; }
 /* v24: every department chip is one size */
 .dept, .deptkey .dept { width: 122px; min-width: 122px; max-width: 122px; justify-content: flex-start; white-space: nowrap; overflow: hidden; }
 .deptkey { grid-template-columns: repeat(5, 122px); }
+
+/* v25: apron legend sits with the aprons; step 1 rule tally stays clear of the dotted connector */
+.legend.aplegend { margin: 0 0 8px; justify-content: flex-start; flex-wrap: wrap; gap: 6px 16px; }
+.rulebook { max-width: 30%; }
+.rulebook { left: 14px; right: auto; top: 46px; max-width: 40%; text-align: left; }
+.feed2 .h { left: 30%; width: calc(32% + 4px); }
+.feed2 .d2 { left: 30%; }
+.feed2 .tip2 { left: 40%; }

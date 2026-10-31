@@ -50,6 +50,8 @@
   <div class="result" id="result"></div>
   </div>
   <div class="col">
+  <div class="legend aplegend"><span><i style="background:var(--bad)"></i>Engines on, queueing</span><span><i style="box-shadow:inset 0 0 0 2px var(--line)"></i>Waiting at gate, engines off</span>
+  <span><i style="background:#ffffff40"></i>Not ready yet</span><span><i style="box-shadow:inset 0 0 0 2px var(--vis);border-radius:0"></i>Gate has no ground power</span><span>Tap any plane</span></div>
   <div class="ap panel after big"><div class="band"><b>After</b><span>Planes wait at the gate, engines off</span><span class="tagx">SkyQueue plan</span></div><svg id="a1" viewBox="0 0 900 400"></svg>
     <div class="apstat"><div><small>Taxi fuel</small><b id="n1">0 kg</b><span class="mini"><i id="f1"></i></span></div>
       <div><small>Engines on</small><b id="m1">0</b><span class="mini"><i id="e1"></i></span></div>
@@ -60,8 +62,6 @@
   </div>
   <div class="logmodal" id="logModal" hidden><div class="mbox"><div class="mhead"><b>Negotiation transcript</b><button class="btn" id="logClose">Close</button></div><div class="log" id="log"></div></div></div>
 </div>
-<div class="legend"><span><i style="background:var(--bad)"></i>Engines on, queueing</span><span><i style="box-shadow:inset 0 0 0 2px var(--line)"></i>Waiting at gate, engines off</span>
-  <span><i style="background:#ffffff40"></i>Not ready yet</span><span><i style="box-shadow:inset 0 0 0 2px var(--vis);border-radius:0"></i>Gate has no ground power</span><span>Tap any plane</span></div>
 
 <div class="step" id="st3"><span class="n">3</span><h3>Your decision</h3>
   <span class="i" tabindex="0" data-tip="Compare the plan with what really happened, check any flight, then approve or reject. Nothing is released until you approve, and your decision is written to the audit log with the time.">i</span></div>
@@ -90,7 +90,7 @@
 <footer class="foot panel">
   <div class="foot-grid">
     <div><div class="brand">Sky<span>Queue</span></div><p>Autonomous multi-agent AI for storm-delayed departure queues. Three AI agents coordinate tower, airline and ramp; plain code checks every plan; a person approves.</p></div>
-    <div><h5>Data</h5><ul><li>2015 US DOT flight delays (challenge dataset)</li><li>airports.csv, airlines.csv</li><li>Live weather: NOAA Aviation Weather Center</li><li>Ops messages, gates and crew hours: made-up, labelled</li></ul></div>
+    <div><h5>Data</h5><ul><li>2015 US DOT flight delays (challenge dataset)</li><li>airports.csv, airlines.csv</li><li>Live weather: NOAA Aviation Weather Center</li><li>Simulated ops messages, gates and crew hours</li></ul></div>
     <div><h5>Built with</h5><ul><li>Claude API: Pydantic</li><li>Python, pandas, pytest</li><li>OR-Tools CP-SAT</li><li>Streamlit, SQLite</li><li>Cloudflare Tunnel</li></ul></div>
     <div><h5>Project</h5><ul><li><a href="https://github.com/slyf0xx97/SkyQueue" target="_blank" rel="noopener">Source on GitHub</a></li><li>Autonomous SG 2026</li><li>Airbus Challenge #2</li></ul></div>
   </div>
