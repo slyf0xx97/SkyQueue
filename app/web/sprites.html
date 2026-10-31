@@ -1,0 +1,33 @@
+<svg width="0" height="0" style="position:absolute"><defs id="pixdefs"></defs></svg>
+<script>
+// Pixel sprites, 16 x 16. One character per pixel; '.' is empty.
+(() => {
+  const C = { k: '#16171a', b: '#6aa8ff', w: '#cfe3ff', g: '#5b6472', r: '#ff5a4e', s: '#f1c7a3', p: '#b98cff', y: '#ffd400',
+    d: '#2d2a4a', m: '#7a3b2e', W: '#f2f0ea', c: '#c99470', o: '#ff9a4a', v: '#ff6b1a' };
+  const S = {
+    'ch-T': ['.......rr.......', '.......kk.......', '...kkkkkkkkkk...', '..kbbbbbbbbbbk..', '..kwwkwwkwwkwk..', '..kwwkwwkwwkwk..',
+             '..kbbbbbbbbbbk..', '...kkkkkkkkkk...', '......kggk......', '......kggk......', '......kggk......', '......kggk......',
+             '......kggk......', '......kggk......', '....kkkkkkkk....', '...kggggggggk...'],
+    'ch-P': ['....kkkkkkkk....', '...kppppppppk...', '..kpppyyyypppk..', '..kkkkkkkkkkkk..', '...kssssssssk...', '...kskksskksk...',
+             '...kssssssssk...', '...ksssmmsssk...', '....kssssssk....', '.....kkkkkk.....', '...kddddddddk...', '..kdddWWWWdddk..',
+             '..kddddWWddddk..', '..kddddddddddk..', '..kdyddddddydk..', '..kkkkkkkkkkkk..'],
+    'ch-G': ['....kkkkkkkk....', '...kyyyyyyyyk...', '..kyyyyyyyyyyk..', '..kkkkkkkkkkkk..', '...kcccccccck...', '...kckkcckkck...',
+             '...kcccccccck...', '....kcccccck....', 'vv...kkkkkk...vv', '.vvkooooooookvv.', '..kkooWWWWookk..', '...kooooooook...',
+             '...kWWWWWWWWk...', '...kooooooook...', '...kook..kook...', '...kkk....kkk...'],
+    'ch-R': ['.......kk.......', '......kWWk......', '.....kWWWWk.....', '....kWWWWWWk....', '...kWWWkkWWWk...', '..kWWWWkkWWWWk..',
+             '.kWWWWWWWWWWWWk.', 'kWWWWWkkkkWWWWWk', '.kWWWWWWWWWWWWk.', '..kWWWWWWWWWWk..', '...kWWWWWWWWk...', '....kWWWWWWk....',
+             '.....kWWWWk.....', '......kWWk......', '.......kk.......', '................'],
+  };
+  const defs = document.getElementById('pixdefs');
+  for (const [id, rows] of Object.entries(S)) {
+    const old = document.getElementById(id); if (old) old.remove();
+    let out = `<symbol id="${id}" viewBox="0 0 16 16" shape-rendering="crispEdges">`;
+    rows.forEach((row, y) => [...row].forEach((ch, x) => {
+      if (ch === '.') return;
+      const cls = ch === 'r' ? ' class="px-blink"' : ch === 'v' ? ` class="${x < 8 ? 'px-wl' : 'px-wr'}"` : '';
+      out += `<rect x="${x}" y="${y}" width="1.02" height="1.02" fill="${C[ch]}"${cls}/>`;
+    }));
+    defs.insertAdjacentHTML('beforeend', out + '</symbol>');
+  }
+})();
+</script>

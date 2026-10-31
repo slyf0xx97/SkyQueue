@@ -1,0 +1,29 @@
+# Every value here is a simplified assumption, labelled as such in the UI.
+scenario:
+  airport: ORD            # most trigger rows in the 2015 sample (F1.6)
+  window_min: 60          # ±60 min for the departure rate (F1.3, F1.5)
+  max_queue: 20           # flights nearest the trigger kept in the scenario
+  remote_stands: [R1, R2, R3]
+  seed: 2026
+
+wake_gap_min:             # leader -> follower, simplified FAA values
+  H: {H: 2.0, M: 2.0, L: 3.0}
+  M: {H: 1.0, M: 1.0, L: 2.0}
+  L: {H: 1.0, M: 1.0, L: 1.0}
+
+taxiway_capacity: 12      # TAXI-01: aircraft between pushback and wheels-off
+co2_per_kg_fuel: 3.16
+missed_connection_min: 30 # CONN-01: arrival delay above this misses connections
+ramp_overtime_window: 15  # CREW-02: pushes in the last N minutes of a ramp shift
+turbulence_wait_min: 10   # TURBULENCE note: flight waits at least this long
+
+reader:
+  kind: fake              # fake | claude
+  model: claude-opus-5-5
+  min_confidence: 0.6
+  flag_threshold: 0.5
+
+agents:
+  kind: fake              # fake | claude
+  model: claude-opus-5-5
+  round_limit: 3

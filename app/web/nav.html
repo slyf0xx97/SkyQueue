@@ -1,0 +1,23 @@
+<!doctype html><html><head><meta charset="utf-8"><style>/*BASE*/
+html, body { height: 64px; overflow: hidden; }
+body { margin: 0; display: flex; align-items: center; gap: 12px; padding: 0 28px; background: #121315f5; border-bottom: 1px solid #ffffff1a; box-sizing: border-box; }
+.brand { font: 900 24px/1 'Anybody', sans-serif; font-stretch: 118%; text-transform: uppercase; margin-right: 8px; white-space: nowrap; }
+.brand span { color: var(--line); }
+.ctl { height: 40px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 0 16px; border-radius: 6px; box-sizing: border-box;
+  font: 800 14px 'Anybody', sans-serif; text-transform: uppercase; letter-spacing: .02em; white-space: nowrap; }
+.auto { border: 2px solid var(--ok); color: var(--ok); font: 700 12px 'Spline Sans Mono', monospace; letter-spacing: .1em; }
+.auto i { width: 8px; height: 8px; border-radius: 50%; background: var(--ok); }
+button.ctl { background: transparent; color: var(--chalk); border: 2px solid #ffffff40; cursor: pointer; }
+button.ctl:hover, button.ctl:focus-visible { border-color: var(--line); color: var(--line); outline: none; }
+button.ctl.go { background: var(--line); color: #121315; border-color: var(--line); }
+button.ctl.go:hover { filter: brightness(1.08); color: #121315; }
+</style></head><body>
+<span class="brand">Sky<span>Queue</span></span>
+<span class="ctl auto"><i></i>Autonomous</span>
+<button class="ctl" id="how">How it works</button>
+<button class="ctl go" id="play">▶ Play sample</button>
+<script>
+const story = () => [...parent.document.querySelectorAll('iframe')].map(f => f.contentWindow).find(w => w && w.SQ);
+document.getElementById('play').onclick = () => { const s = story(); if (s) s.SQ.play(); };
+document.getElementById('how').onclick = () => { const s = story(); if (s) s.SQ.how(); };
+</script></body></html>
