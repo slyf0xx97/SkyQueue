@@ -110,7 +110,7 @@ class Coordinator:
             timing, checks = _check(s, plan_lines, self.decisions)
             plan = Plan(source="AGREED", lines=plan_lines, timing=timing, checks=checks)
         else:
-            plan = solve(s, self.decisions, blocked_by=sorted(set(self.blocked)) or ["NO-AGREEMENT"])
+            plan = solve(s, self.decisions, blocked_by=sorted(set(self.blocked)) or ["NO-AGREEMENT"], optimise=True)
 
         self._finish(plan)
         log.usage(USAGE)

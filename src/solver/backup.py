@@ -1,13 +1,16 @@
-"""Greedy backup plan (F10). No AI.
+"""Backup plan (F10). No AI.
 
-First come first served at the runway, then metering: each flight is held (engines off) until it can
+Runway order: OR-Tools CP-SAT when optimise=True (see cpsat.py), else first come first served.
+Then metering: each flight is held (engines off) until it can
 taxi straight to its runway slot. Holds that the gate can't take go to a remote stand, and stands go
-first to the flights with the least fuel slack.
+first to the flights with the least fuel slack. The CP-SAT order is kept only if it passes every hard
+rule and burns no more taxi fuel than the first-come-first-served order.
 """
 from src.checker.rules import NO_HOLD_FLIGHT, active, check, hard_failures
 from src.config import CFG
 from src.schemas import GATE_TARGET, PlanItem, PlanLine, Plan, Scenario, hhmm
 from src.sim.timing import simulate
+from src.solver.cpsat import runway_order
 
 BUFFER_MIN = 2   # arrive at the runway queue this long before the slot
 
@@ -29,14 +32,26 @@ def _slots(order: list[str]) -> list[PlanItem]:
     return [PlanItem(flight=fid, action="PUSH", runway_slot=i) for i, fid in enumerate(order, 1)]
 
 
-def solve(s: Scenario, constraints=None, source="BACKUP", blocked_by=None) -> Plan:
+def solve(s: Scenario, constraints=None, source="BACKUP", blocked_by=None, optimise=False) -> Plan:
+    no_hold = {c.flight for c in active(constraints) if c.type in NO_HOLD_FLIGHT}
+    greedy = _plan(s, _runway_order(s), constraints, source, blocked_by)
+    order = runway_order(s, no_hold) if optimise else None
+    if not order:
+        return greedy
+    best = _plan(s, order, constraints, source, blocked_by, solver="OR-Tools CP-SAT")
+    fuel = lambda p: sum(t.fuel_kg for t in p.timing)  # noqa: E731
+    if hard_failures(best.checks) or (not hard_failures(greedy.checks) and fuel(best) > fuel(greedy)):
+        return greedy
+    return best
+
+
+def _plan(s: Scenario, order: list[str], constraints, source, blocked_by, solver="first come first served") -> Plan:
     cons = active(constraints)
     no_hold = {c.flight for c in cons if c.type in NO_HOLD_FLIGHT}
     turb = {c.flight for c in cons if c.type == "TURBULENCE"}
     bad_gates = {c.gate for c in cons if c.type in GATE_TARGET}
     fl = {f.flight: f for f in s.flights}
 
-    order = _runway_order(s)
     base = {t.flight: t for t in simulate(s, _slots(order))}
     items, need_stand = {}, []
     for slot, fid in enumerate(order, 1):
@@ -69,7 +84,7 @@ def solve(s: Scenario, constraints=None, source="BACKUP", blocked_by=None) -> Pl
     timing, checks = check(s, lines, constraints)
     fails = hard_failures(checks)
     return Plan(source=source, lines=lines, timing=timing, checks=checks, blocked_by=blocked_by or [],
-                note=f"no safe improvement found: {', '.join(fails)}" if fails else "")
+                note=f"no safe improvement found: {', '.join(fails)}" if fails else f"runway order: {solver}")
 
 
 def first_come_first_served(s: Scenario, constraints=None) -> Plan:
